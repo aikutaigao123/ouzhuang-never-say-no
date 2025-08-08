@@ -12,37 +12,37 @@
 			containerPortal = 743FE57B2E13E0CF00694704 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 743FE5822E13E0CF00694704;
-			remoteInfo = 7.1;
+			remoteInfo = NeverSayNo;
 		};
 		743FE59B2E13E0D000694704 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 743FE57B2E13E0CF00694704 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 743FE5822E13E0CF00694704;
-			remoteInfo = 7.1;
+			remoteInfo = NeverSayNo;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		743FE5832E13E0CF00694704 /* 7.1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 7.1.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		743FE5902E13E0D000694704 /* 7.1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = 7.1Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		743FE59A2E13E0D000694704 /* 7.1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = 7.1UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7428B51C2E1791C600FF7AAD /* NeverSayNoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NeverSayNoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		743FE58NeverSayNoE13E0CF00694704 /* NeverSayNo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NeverSayNo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		743FE5902E13E0D000694704 /* NeverSayNoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NeverSayNoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		743FE5852E13E0CF00694704 /* 7.1 */ = {
+		743FE5852E13E0CF00694704 /* NeverSayNo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = 7.1;
+			path = NeverSayNo;
 			sourceTree = "<group>";
 		};
-		743FE5932E13E0D000694704 /* 7.1Tests */ = {
+		743FE59D2E13E0D000694704 /* NeverSayNoUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = 7.1Tests;
+			path = NeverSayNoUITests;
 			sourceTree = "<group>";
 		};
-		743FE59D2E13E0D000694704 /* 7.1UITests */ = {
+		743FE59NeverSayNoE13E0D000694704 /* NeverSayNoTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = 7.1UITests;
+			path = NeverSayNoTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +75,9 @@
 		743FE57A2E13E0CF00694704 = {
 			isa = PBXGroup;
 			children = (
-				743FE5852E13E0CF00694704 /* 7.1 */,
-				743FE5932E13E0D000694704 /* 7.1Tests */,
-				743FE59D2E13E0D000694704 /* 7.1UITests */,
+				743FE5852E13E0CF00694704 /* NeverSayNo */,
+				743FE59NeverSayNoE13E0D000694704 /* NeverSayNoTests */,
+				743FE59D2E13E0D000694704 /* NeverSayNoUITests */,
 				743FE5842E13E0CF00694704 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,9 +85,9 @@
 		743FE5842E13E0CF00694704 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				743FE5832E13E0CF00694704 /* 7.1.app */,
-				743FE5902E13E0D000694704 /* 7.1Tests.xctest */,
-				743FE59A2E13E0D000694704 /* 7.1UITests.xctest */,
+				743FE58NeverSayNoE13E0CF00694704 /* NeverSayNo.app */,
+				743FE5902E13E0D000694704 /* NeverSayNoTests.xctest */,
+				7428B51C2E1791C600FF7AAD /* NeverSayNoUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		743FE5822E13E0CF00694704 /* 7.1 */ = {
+		743FE5822E13E0CF00694704 /* NeverSayNo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 743FE5A42E13E0D000694704 /* Build configuration list for PBXNativeTarget "7.1" */;
+			buildConfigurationList = 743FE5A42E13E0D000694704 /* Build configuration list for PBXNativeTarget "NeverSayNo" */;
 			buildPhases = (
 				743FE57F2E13E0CF00694704 /* Sources */,
 				743FE5802E13E0CF00694704 /* Frameworks */,
@@ -108,18 +108,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				743FE5852E13E0CF00694704 /* 7.1 */,
+				743FE5852E13E0CF00694704 /* NeverSayNo */,
 			);
-			name = 7.1;
+			name = NeverSayNo;
 			packageProductDependencies = (
 			);
-			productName = 7.1;
-			productReference = 743FE5832E13E0CF00694704 /* 7.1.app */;
+			productName = NeverSayNo;
+			productReference = 743FE58NeverSayNoE13E0CF00694704 /* NeverSayNo.app */;
 			productType = "com.apple.product-type.application";
 		};
-		743FE58F2E13E0D000694704 /* 7.1Tests */ = {
+		743FE58F2E13E0D000694704 /* NeverSayNoTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 743FE5A72E13E0D000694704 /* Build configuration list for PBXNativeTarget "7.1Tests" */;
+			buildConfigurationList = 743FE5A72E13E0D000694704 /* Build configuration list for PBXNativeTarget "NeverSayNoTests" */;
 			buildPhases = (
 				743FE58C2E13E0D000694704 /* Sources */,
 				743FE58D2E13E0D000694704 /* Frameworks */,
@@ -131,18 +131,18 @@
 				743FE5922E13E0D000694704 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				743FE5932E13E0D000694704 /* 7.1Tests */,
+				743FE59NeverSayNoE13E0D000694704 /* NeverSayNoTests */,
 			);
-			name = 7.1Tests;
+			name = NeverSayNoTests;
 			packageProductDependencies = (
 			);
-			productName = 7.1Tests;
-			productReference = 743FE5902E13E0D000694704 /* 7.1Tests.xctest */;
+			productName = NeverSayNoTests;
+			productReference = 743FE5902E13E0D000694704 /* NeverSayNoTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		743FE5992E13E0D000694704 /* 7.1UITests */ = {
+		743FE5992E13E0D000694704 /* NeverSayNoUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 743FE5AA2E13E0D000694704 /* Build configuration list for PBXNativeTarget "7.1UITests" */;
+			buildConfigurationList = 743FE5AA2E13E0D000694704 /* Build configuration list for PBXNativeTarget "NeverSayNoUITests" */;
 			buildPhases = (
 				743FE5962E13E0D000694704 /* Sources */,
 				743FE5972E13E0D000694704 /* Frameworks */,
@@ -154,13 +154,13 @@
 				743FE59C2E13E0D000694704 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				743FE59D2E13E0D000694704 /* 7.1UITests */,
+				743FE59D2E13E0D000694704 /* NeverSayNoUITests */,
 			);
-			name = 7.1UITests;
+			name = NeverSayNoUITests;
 			packageProductDependencies = (
 			);
-			productName = 7.1UITests;
-			productReference = 743FE59A2E13E0D000694704 /* 7.1UITests.xctest */;
+			productName = NeverSayNoUITests;
+			productReference = 7428B51C2E1791C600FF7AAD /* NeverSayNoUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 743FE57E2E13E0CF00694704 /* Build configuration list for PBXProject "7.1" */;
+			buildConfigurationList = 743FE57E2E13E0CF00694704 /* Build configuration list for PBXProject "NeverSayNo" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				743FE5822E13E0CF00694704 /* 7.1 */,
-				743FE58F2E13E0D000694704 /* 7.1Tests */,
-				743FE5992E13E0D000694704 /* 7.1UITests */,
+				743FE5822E13E0CF00694704 /* NeverSayNo */,
+				743FE58F2E13E0D000694704 /* NeverSayNoTests */,
+				743FE5992E13E0D000694704 /* NeverSayNoUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		743FE5922E13E0D000694704 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 743FE5822E13E0CF00694704 /* 7.1 */;
+			target = 743FE5822E13E0CF00694704 /* NeverSayNo */;
 			targetProxy = 743FE5912E13E0D000694704 /* PBXContainerItemProxy */;
 		};
 		743FE59C2E13E0D000694704 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 743FE5822E13E0CF00694704 /* 7.1 */;
+			target = 743FE5822E13E0CF00694704 /* NeverSayNo */;
 			targetProxy = 743FE59B2E13E0D000694704 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -316,13 +316,13 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_NeverSayNo_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -333,7 +333,145 @@
 			};
 			name = Debug;
 		};
-		743FE5A32E13E0D000694704 /* Release */ = {
+		743FE5A52E13E0D000694704 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NeverSayNo/NeverSayNo.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9K87XT45CQ;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Never Say No";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 NeverSayNo. All rights reserved.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "此应用需要访问您的位置信息来记录寻找功能的使用位置";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yonderspace-cd.NeverSayNo.app";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		743FE5A62E13E0D000694704 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NeverSayNo/NeverSayNo.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9K87XT45CQ;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Never Say No";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 NeverSayNo. All rights reserved.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "此应用需要访问您的位置信息来记录寻找功能的使用位置";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yonderspace-cd.NeverSayNo.app";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		743FE5A82E13E0D000694704 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9K87XT45CQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yonderspace-cd.NeverSayNoTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NeverSayNo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NeverSayNo";
+			};
+			name = Debug;
+		};
+		743FE5A92E13E0D000694704 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9K87XT45CQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yonderspace-cd.NeverSayNoTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NeverSayNo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NeverSayNo";
+			};
+			name = Release;
+		};
+		743FE5AB2E13E0D000694704 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9K87XT45CQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yonderspace-cd.NeverSayNoUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = NeverSayNo;
+			};
+			name = Debug;
+		};
+		743FE5AC2E13E0D000694704 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9K87XT45CQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yonderspace-cd.NeverSayNoUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = NeverSayNo;
+			};
+			name = Release;
+		};
+		743FE5ANeverSayNoE13E0D000694704 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -374,13 +512,13 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_64_TO_NeverSayNo_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -390,147 +528,19 @@
 			};
 			name = Release;
 		};
-		743FE5A52E13E0D000694704 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9K87XT45CQ;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yonderspace-cd.2.--1";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		743FE5A62E13E0D000694704 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9K87XT45CQ;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yonderspace-cd.2.--1";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		743FE5A82E13E0D000694704 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9K87XT45CQ;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yonderspace-cd.2.--1Tests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/7.1.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/7.1";
-			};
-			name = Debug;
-		};
-		743FE5A92E13E0D000694704 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9K87XT45CQ;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yonderspace-cd.2.--1Tests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/7.1.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/7.1";
-			};
-			name = Release;
-		};
-		743FE5AB2E13E0D000694704 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9K87XT45CQ;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yonderspace-cd.2.--1UITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = 7.1;
-			};
-			name = Debug;
-		};
-		743FE5AC2E13E0D000694704 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9K87XT45CQ;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yonderspace-cd.2.--1UITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = 7.1;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		743FE57E2E13E0CF00694704 /* Build configuration list for PBXProject "7.1" */ = {
+		743FE57E2E13E0CF00694704 /* Build configuration list for PBXProject "NeverSayNo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				743FE5A22E13E0D000694704 /* Debug */,
-				743FE5A32E13E0D000694704 /* Release */,
+				743FE5ANeverSayNoE13E0D000694704 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		743FE5A42E13E0D000694704 /* Build configuration list for PBXNativeTarget "7.1" */ = {
+		743FE5A42E13E0D000694704 /* Build configuration list for PBXNativeTarget "NeverSayNo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				743FE5A52E13E0D000694704 /* Debug */,
@@ -539,7 +549,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		743FE5A72E13E0D000694704 /* Build configuration list for PBXNativeTarget "7.1Tests" */ = {
+		743FE5A72E13E0D000694704 /* Build configuration list for PBXNativeTarget "NeverSayNoTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				743FE5A82E13E0D000694704 /* Debug */,
@@ -548,7 +558,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		743FE5AA2E13E0D000694704 /* Build configuration list for PBXNativeTarget "7.1UITests" */ = {
+		743FE5AA2E13E0D000694704 /* Build configuration list for PBXNativeTarget "NeverSayNoUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				743FE5AB2E13E0D000694704 /* Debug */,
