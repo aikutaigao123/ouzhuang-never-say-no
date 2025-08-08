@@ -137,6 +137,12 @@ class LeanCloudService: ObservableObject {
                 }
                 
                 if let httpResponse = response as? HTTPURLResponse {
+                    #if DEBUG
+                    print("📥 LeanCloud响应(初始上传): 状态码=\(httpResponse.statusCode)")
+                    if let data = data, let body = String(data: data, encoding: .utf8) {
+                        print("📨 响应体:\n\(body)")
+                    }
+                    #endif
                     if httpResponse.statusCode == 201 {
                         print("✅ LocationRecord字段创建成功")
                         completion(true)
@@ -214,6 +220,12 @@ class LeanCloudService: ObservableObject {
                 }
                 
                 if let httpResponse = response as? HTTPURLResponse {
+                    #if DEBUG
+                    print("📥 LeanCloud响应(简化上传): 状态码=\(httpResponse.statusCode)")
+                    if let data = data, let body = String(data: data, encoding: .utf8) {
+                        print("📨 响应体:\n\(body)")
+                    }
+                    #endif
                     if httpResponse.statusCode == 201 {
                         print("✅ 简化数据上传成功")
                         completion(true, "")
