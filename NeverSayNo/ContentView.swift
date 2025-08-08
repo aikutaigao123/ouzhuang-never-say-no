@@ -2545,6 +2545,14 @@ struct SearchView: View {
                 ]
 
 
+                #if DEBUG
+                if let pretty = try? JSONSerialization.data(withJSONObject: locationData, options: [.prettyPrinted]),
+                   let bodyString = String(data: pretty, encoding: .utf8) {
+                    print("🧭 寻找按钮：即将上传 LocationRecord")
+                    print("📦 本地组装的请求体:\n\(bodyString)")
+                }
+                #endif
+
                 LeanCloudService.shared.sendLocation(locationData: locationData) { success, message in
                     DispatchQueue.main.async {
                         self.isLoading = false

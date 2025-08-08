@@ -194,6 +194,13 @@ class LeanCloudService: ObservableObject {
         
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: locationDataWithACL)
+            #if DEBUG
+            if let pretty = try? JSONSerialization.data(withJSONObject: locationDataWithACL, options: [.prettyPrinted]),
+               let bodyString = String(data: pretty, encoding: .utf8) {
+                print("🔼 准备上传 LocationRecord → \(urlString)")
+                print("📦 请求体:\n\(bodyString)")
+            }
+            #endif
         } catch {
             completion(false, "数据编码失败: \(error.localizedDescription)")
             return
@@ -379,6 +386,13 @@ class LeanCloudService: ObservableObject {
         
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: locationDataWithACL)
+            #if DEBUG
+            if let pretty = try? JSONSerialization.data(withJSONObject: locationDataWithACL, options: [.prettyPrinted]),
+               let bodyString = String(data: pretty, encoding: .utf8) {
+                print("🔼 准备上传 简化 LocationRecord → \(urlString)")
+                print("📦 请求体:\n\(bodyString)")
+            }
+            #endif
         } catch {
             completion(false, "数据编码失败: \(error.localizedDescription)")
             return
