@@ -353,33 +353,31 @@ class DiamondManager: ObservableObject {
         LeanCloudService.shared.fetchUserAvatar(userId: userId, loginType: loginType) { [weak self] userAvatar, error in
             DispatchQueue.main.async {
                 if let error = error {
-                    // 如果是新用户或表不存在，使用默认头像
+                    // 如果是新用户或表不存在，则为其分配一个随机emoji头像并保存
                     if error.contains("未找到") || error.contains("Class or object doesn't exists") {
-                                            // 根据用户类型设置默认头像（使用信息确认界面的图标）
-                    let defaultAvatar: String
-                    switch loginType {
-                    case "apple":
-                        defaultAvatar = "applelogo" // Apple logo SF Symbol
-                    case "internal":
-                        defaultAvatar = "person.circle.fill" // 内部用户 SF Symbol
-                    case "guest":
-                        defaultAvatar = "person.circle.fill" // 游客 SF Symbol
-                    default:
-                        defaultAvatar = "person.circle.fill" // 默认 SF Symbol
-                    }
-                        UserDefaults.standard.set(defaultAvatar, forKey: "custom_avatar_\(userId)")
-                        print("🔄 使用默认头像: \(defaultAvatar)")
+                        let randomEmoji = EmojiList.allEmojis.randomElement() ?? "🙂"
+                        UserDefaults.standard.set(randomEmoji, forKey: "custom_avatar_\(userId)")
+                        #if DEBUG
+                        print("🎲 首次登录分配随机头像: \(randomEmoji)")
+                        #endif
+                        // 异步写入云端头像记录（忽略写入失败，不阻塞首次体验）
+                        LeanCloudService.shared.createUserAvatarRecord(userId: userId, loginType: loginType, userAvatar: randomEmoji) { _ in }
                     } else {
                         // 网络错误时保持当前头像（如果有的话）
                         print("⚠️ 获取头像失败: \(error)")
                     }
-                } else if let userAvatar = userAvatar {
+                } else if let userAvatar = userAvatar, !userAvatar.isEmpty {
                     // 使用服务器返回的头像
                     UserDefaults.standard.set(userAvatar, forKey: "custom_avatar_\(userId)")
                     print("🔄 从服务器加载头像: \(userAvatar)")
                 } else {
-                    // 未知错误时保持当前头像（如果有的话）
-                    print("⚠️ 获取头像失败，未知错误")
+                    // 未知错误或空头像：也随机分配一个
+                    let randomEmoji = EmojiList.allEmojis.randomElement() ?? "🙂"
+                    UserDefaults.standard.set(randomEmoji, forKey: "custom_avatar_\(userId)")
+                    #if DEBUG
+                    print("🎲 空头像回退为随机头像: \(randomEmoji)")
+                    #endif
+                    LeanCloudService.shared.createUserAvatarRecord(userId: userId, loginType: loginType, userAvatar: randomEmoji) { _ in }
                 }
             }
         }
