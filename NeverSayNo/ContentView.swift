@@ -2517,58 +2517,66 @@ struct SearchView: View {
                 isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
                 let deviceTime = isoFormatter.string(from: localDate)
 
-                // 获取用户头像信息 - 基于用户类型设置默认头像
-                let userAvatar: String
-                switch loginType {
-                case "apple":
-                    userAvatar = "apple_logo" // Apple logo SF Symbol
-                case "internal":
-                    userAvatar = "👤" // 内部用户 emoji
-                case "guest":
-                    userAvatar = "👥" // 游客 emoji
-                default:
-                    userAvatar = "👤" // 默认 emoji
+                // 先尝试从服务器获取用户头像，若失败则回退到默认头像
+                func defaultAvatar(for loginType: String) -> String {
+                    switch loginType {
+                    case "apple": return "apple_logo"
+                    case "internal": return "👤"
+                    case "guest": return "👥"
+                    default: return "👤"
+                    }
                 }
-                
-                let locationData: [String: Any] = [
-                    "latitude": location.coordinate.latitude,
-                    "longitude": location.coordinate.longitude,
-                    "accuracy": location.horizontalAccuracy, // 添加精度信息
-                    "user_id": userId,
-                    "user_name": userName,
-                    "login_type": loginType,
-                    "user_email": userEmail ?? "", // 添加邮箱字段
-                    "user_avatar": userAvatar, // 添加用户头像
-                    "device_id": deviceID,
-                    "timezone": tzID,
-                    "device_time": deviceTime  // 可能已转为北京时间
-                ]
 
+                LeanCloudService.shared.fetchUserAvatar(userId: userId, loginType: loginType) { fetchedAvatar, _ in
+                    let finalAvatar = (fetchedAvatar?.isEmpty == false) ? fetchedAvatar! : defaultAvatar(for: loginType)
 
-                #if DEBUG
-                if let pretty = try? JSONSerialization.data(withJSONObject: locationData, options: [.prettyPrinted]),
-                   let bodyString = String(data: pretty, encoding: .utf8) {
-                    print("🧭 寻找按钮：即将上传 LocationRecord")
-                    print("📦 本地组装的请求体:\n\(bodyString)")
-                }
-                #endif
+                    let locationData: [String: Any] = [
+                        "latitude": location.coordinate.latitude,
+                        "longitude": location.coordinate.longitude,
+                        "accuracy": location.horizontalAccuracy,
+                        "user_id": userId,
+                        "user_name": userName,
+                        "login_type": loginType,
+                        "user_email": userEmail ?? "",
+                        "user_avatar": finalAvatar,
+                        "device_id": deviceID,
+                        "timezone": tzID,
+                        "device_time": deviceTime
+                    ]
 
-                LeanCloudService.shared.sendLocation(locationData: locationData) { success, message in
-                    DispatchQueue.main.async {
-                        self.isLoading = false
-                        if success {
-                            self.fetchRandomRecord()
-                        } else {
-                            // 提供更详细的错误信息
-                            if message.contains("API密钥配置错误") {
-                                self.resultMessage = "API配置错误：\n请检查LeanCloud配置\n\n错误详情：\(message)\n\n建议：\n1. 检查App ID和App Key是否正确\n2. 确认Server URL格式\n3. 点击'API配置检查'按钮进行诊断"
+                    #if DEBUG
+                    if let pretty = try? JSONSerialization.data(withJSONObject: locationData, options: [.prettyPrinted]),
+                       let bodyString = String(data: pretty, encoding: .utf8) {
+                        print("🧭 寻找按钮：即将上传 LocationRecord (含头像)")
+                        print("📦 本地组装的请求体:\n\(bodyString)")
+                    }
+                    #endif
+
+                    LeanCloudService.shared.sendLocation(locationData: locationData) { success, message in
+                        DispatchQueue.main.async {
+                            self.isLoading = false
+                            if success {
+                                self.fetchRandomRecord()
                             } else {
-                                self.resultMessage = message
+                                if message.contains("API密钥配置错误") {
+                                    self.resultMessage = "API配置错误：\n请检查LeanCloud配置\n\n错误详情：\(message)\n\n建议：\n1. 检查App ID和App Key是否正确\n2. 确认Server URL格式\n3. 点击'API配置检查'按钮进行诊断"
+                                } else {
+                                    self.resultMessage = message
+                                }
+                                self.showAlert = true
                             }
-                            self.showAlert = true
                         }
                     }
                 }
+                
+                
+                
+                
+                
+                
+                
+                
+                
             }
         }
     }
