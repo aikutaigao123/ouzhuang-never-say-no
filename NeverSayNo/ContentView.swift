@@ -2344,6 +2344,7 @@ struct SearchView: View {
         }
         .sheet(isPresented: $showRandomHistory) {
             RandomMatchHistoryView(
+                userManager: userManager,
                 history: randomMatchHistory,
                 calculateDistance: calculateDistance,
                 formatDistance: formatDistance,
@@ -2364,10 +2365,6 @@ struct SearchView: View {
                 },
                 ensureLatestAvatar: { uid, ltype in
                     ensureLatestAvatar(userId: uid, loginType: ltype)
-                },
-                onTapAvatar: { emoji in
-                    currentAvatarForZoom = emoji
-                    showAvatarZoom = true
                 }
             )
         }
@@ -3772,6 +3769,7 @@ struct RandomRecordView: View {
 
 // 随机匹配历史视图
 struct RandomMatchHistoryView: View {
+    @ObservedObject var userManager: UserManager
     let history: [RandomMatchHistory]
     let calculateDistance: (CLLocation, Double, Double) -> Double
     let formatDistance: (Double) -> String
@@ -3786,7 +3784,9 @@ struct RandomMatchHistoryView: View {
     let hasReportedUser: (String) -> Bool
     let avatarResolver: (String?, String?, String?) -> String?
     let ensureLatestAvatar: (String?, String?) -> Void
-    let onTapAvatar: (String) -> Void
+
+    @State private var showAvatarZoomInHistory = false
+    @State private var historyAvatarForZoom: String? = nil
     
     @Environment(\.dismiss) private var dismiss
     @State private var showClearAlert = false
@@ -3826,7 +3826,10 @@ struct RandomMatchHistoryView: View {
                                 hasReportedUser: hasReportedUser,
                                 avatarResolver: avatarResolver,
                                 ensureLatestAvatar: ensureLatestAvatar,
-                                onTapAvatar: onTapAvatar
+                                onTapAvatar: { emoji in
+                                    historyAvatarForZoom = emoji
+                                    showAvatarZoomInHistory = true
+                                }
                             )
                             .listRowInsets(EdgeInsets())
                             .listRowSeparator(.hidden)
@@ -3843,6 +3846,9 @@ struct RandomMatchHistoryView: View {
                     }
                     .listStyle(PlainListStyle())
                 }
+            }
+            .sheet(isPresented: $showAvatarZoomInHistory) {
+                AvatarZoomView(userManager: userManager, showRandomButton: false, initialEmoji: historyAvatarForZoom)
             }
             .navigationTitle("随机匹配历史")
             .navigationBarTitleDisplayMode(.large)
