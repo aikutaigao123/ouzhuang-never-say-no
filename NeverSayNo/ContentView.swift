@@ -5203,9 +5203,9 @@ struct ProfileView: View {
             } message: {
                 Text("删除账户后，您的账户将在7天后自动删除。期间如果重新登录，删除请求将被取消。确定要删除账户吗？")
             }
-        .sheet(isPresented: $showAvatarZoom) {
-            AvatarZoomView(userManager: userManager, showRandomButton: true, initialEmoji: currentAvatarForZoom)
-        }
+            .sheet(isPresented: $showAvatarZoom) {
+                AvatarZoomView(userManager: userManager, showRandomButton: true, initialEmoji: nil)
+            }
 
         }
     }
