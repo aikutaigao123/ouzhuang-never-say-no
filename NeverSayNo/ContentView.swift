@@ -1676,6 +1676,20 @@ struct SearchView: View {
             HStack {
                 // 用户头像 - 可点击放大
                 Button(action: {
+                    var token: String? = nil
+                    if let userId = userManager.currentUser?.id,
+                       let customAvatar = UserDefaults.standard.string(forKey: "custom_avatar_\(userId)") {
+                        token = customAvatar
+                    } else if let loginType = userManager.currentUser?.loginType {
+                        if loginType == .apple {
+                            token = "applelogo"
+                        } else if loginType == .`internal` {
+                            token = "person.circle.fill"
+                        } else {
+                            token = "person.circle"
+                        }
+                    }
+                    currentAvatarForZoom = token
                     showAvatarZoom = true
                 }) {
                     // 检查是否有自定义头像
@@ -5189,9 +5203,9 @@ struct ProfileView: View {
             } message: {
                 Text("删除账户后，您的账户将在7天后自动删除。期间如果重新登录，删除请求将被取消。确定要删除账户吗？")
             }
-            .sheet(isPresented: $showAvatarZoom) {
-                AvatarZoomView(userManager: userManager, showRandomButton: true, initialEmoji: nil)
-            }
+        .sheet(isPresented: $showAvatarZoom) {
+            AvatarZoomView(userManager: userManager, showRandomButton: true, initialEmoji: currentAvatarForZoom)
+        }
 
         }
     }
