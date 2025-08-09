@@ -1636,6 +1636,8 @@ struct SearchView: View {
     @State private var showCancelDeletionAlert = false // 新增：显示取消删除确认对话框
     @State private var pendingDeletionDate = "" // 新增：待删除日期
     @State private var showAvatarZoom = false // 新增：显示头像放大
+    @State private var showOtherAvatarZoom = false // 新增：显示他人头像放大
+    @State private var otherAvatarToZoom: String? = nil // 新增：他人头像内容
     @State private var latestAvatars: [String: String] = [:] // 缓存 user_id -> 最新头像
     
     // 权限状态文本
@@ -1653,6 +1655,19 @@ struct SearchView: View {
             return "使用时允许"
         @unknown default:
             return "未知状态"
+        }
+    }
+
+    // 拉取并缓存指定用户的最新头像
+    private func ensureLatestAvatar(userId: String?, loginType: String?) {
+        guard let userId = userId, !userId.isEmpty else { return }
+        if latestAvatars[userId] != nil { return }
+        LeanCloudService.shared.fetchUserAvatar(userId: userId, loginType: loginType ?? "") { avatar, _ in
+            DispatchQueue.main.async {
+                if let avatar = avatar, !avatar.isEmpty {
+                    latestAvatars[userId] = avatar
+                }
+            }
         }
     }
     
@@ -1898,33 +1913,40 @@ struct SearchView: View {
                                 
                                 // 用户信息卡片
                                 VStack(spacing: 2) {
-                                    // 用户头像
-                                    if let userAvatar = historyItem.record.user_avatar, !userAvatar.isEmpty {
-                                        if userAvatar == "apple_logo" {
-                                            // 显示Apple logo SF Symbol
-                                            Image(systemName: "applelogo")
-                                                .font(.system(size: 12))
-                                                .foregroundColor(.black)
-                                        } else {
-                                            // 显示其他emoji头像
-                                            Text(userAvatar)
-                                                .font(.system(size: 12))
-                                        }
-                                    } else {
-                                        // 根据用户类型显示默认头像
-                                        if historyItem.record.login_type == "apple" {
-                                            Image(systemName: "applelogo")
-                                                .font(.system(size: 12))
-                                                .foregroundColor(.black)
-                                        } else if historyItem.record.login_type == "internal" {
-                                            Image(systemName: "person.circle.fill")
-                                                .font(.system(size: 12))
-                                                .foregroundColor(.purple)
-                                        } else {
-                                            Text("👥")
-                                                .font(.system(size: 12))
-                                        }
-                                    }
+                    // 用户头像（历史卡片也以最新头像为准，可点击放大）
+                    let latest = latestAvatars[historyItem.record.user_id ?? ""]
+                    let fallback = historyItem.record.user_avatar
+                    let avatarToShow = latest?.isEmpty == false ? latest! : (fallback?.isEmpty == false ? fallback! : nil)
+                    if let a = avatarToShow {
+                        if a == "apple_logo" {
+                            Image(systemName: "applelogo")
+                                .font(.system(size: 12))
+                                .foregroundColor(.black)
+                                .onTapGesture { otherAvatarToZoom = a; showOtherAvatarZoom = true }
+                        } else {
+                            Text(a)
+                                .font(.system(size: 12))
+                                .onTapGesture { otherAvatarToZoom = a; showOtherAvatarZoom = true }
+                        }
+                    } else {
+                        let lt = historyItem.record.login_type
+                        if lt == "apple" {
+                            Image(systemName: "applelogo")
+                                .font(.system(size: 12))
+                                .foregroundColor(.black)
+                                .onTapGesture { otherAvatarToZoom = latest ?? "🍎"; showOtherAvatarZoom = true }
+                        } else if lt == "internal" {
+                            Image(systemName: "person.circle.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(.purple)
+                                .onTapGesture { otherAvatarToZoom = latest ?? "👤"; showOtherAvatarZoom = true }
+                        } else {
+                            let display = latest ?? "👥"
+                            Text(display)
+                                .font(.system(size: 12))
+                                .onTapGesture { otherAvatarToZoom = display; showOtherAvatarZoom = true }
+                        }
+                    }
                                     
                                     Text(historyItem.record.user_name ?? "用户")
                                         .font(.caption2)
@@ -2039,9 +2061,8 @@ struct SearchView: View {
                     HStack(spacing: 12) {
                             // 显示用户头像（优先取最新 UserAvatarRecord）
                             let displayAvatar: String? = {
-                                if let uid = record.user_id, let latest = latestAvatars[uid], !latest.isEmpty {
-                                    return latest
-                                }
+                                let uid = record.user_id
+                                if let latest = latestAvatars[uid], !latest.isEmpty { return latest }
                                 return record.user_avatar
                             }()
 
@@ -2050,15 +2071,13 @@ struct SearchView: View {
                                     Image(systemName: "applelogo")
                                         .font(.system(size: 32))
                                         .foregroundColor(.black)
-                                        .background(
-                                            Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50)
-                                        )
+                                        .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
+                                        .onTapGesture { otherAvatarToZoom = avatar; showOtherAvatarZoom = true }
                                 } else {
                                     Text(avatar)
                                         .font(.system(size: 32))
-                                        .background(
-                                            Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50)
-                                        )
+                                        .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
+                                        .onTapGesture { otherAvatarToZoom = avatar; showOtherAvatarZoom = true }
                                 }
                             } else {
                                 if record.login_type == "apple" {
@@ -2066,15 +2085,19 @@ struct SearchView: View {
                                         .font(.system(size: 32))
                                         .foregroundColor(.black)
                                         .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
+                                        .onTapGesture { otherAvatarToZoom = latestAvatars[record.user_id ?? ""] ?? "🍎"; showOtherAvatarZoom = true }
                                 } else if record.login_type == "internal" {
                                     Image(systemName: "person.circle.fill")
                                         .font(.system(size: 32))
                                         .foregroundColor(.purple)
                                         .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
+                                        .onTapGesture { otherAvatarToZoom = latestAvatars[record.user_id ?? ""] ?? "👤"; showOtherAvatarZoom = true }
                                 } else {
-                                    Text(self.latestAvatars[record.user_id ?? ""] ?? "👥")
+                                    let display = self.latestAvatars[record.user_id ?? ""] ?? "👥"
+                                    Text(display)
                                         .font(.system(size: 32))
                                         .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
+                                        .onTapGesture { otherAvatarToZoom = display; showOtherAvatarZoom = true }
                                 }
                             }
                         
@@ -2344,8 +2367,16 @@ struct SearchView: View {
                 onReportUser: { userId, userName, userEmail, reason, deviceId, loginType in
                     addReportRecord(reportedUserId: userId, reportedUserName: userName, reportedUserEmail: userEmail, reportReason: reason, reportedDeviceId: deviceId, reportedUserLoginType: loginType)
                 },
-                hasReportedUser: hasReportedUser
+                hasReportedUser: hasReportedUser,
+                latestAvatars: latestAvatars,
+                onTapAvatar: { avatar in
+                    self.otherAvatarToZoom = avatar
+                    self.showOtherAvatarZoom = true
+                }
             )
+        }
+        .sheet(isPresented: $showOtherAvatarZoom) {
+            AvatarZoomView(userManager: userManager, showRandomButton: false)
         }
         .sheet(isPresented: $showRechargeSheet) {
             RechargeView(diamondManager: diamondManager)
@@ -2864,11 +2895,13 @@ struct SearchView: View {
                             
                             self.randomRecord = record
                             // 异步刷新对方头像为最新 UserAvatarRecord
-                            if let uid = record.user_id, let ltype = record.login_type {
+                            do {
+                                let uid = record.user_id
+                                let ltype = record.login_type ?? ""
                                 LeanCloudService.shared.fetchUserAvatar(userId: uid, loginType: ltype) { avatar, _ in
                                     DispatchQueue.main.async {
                                         if let avatar = avatar, !avatar.isEmpty {
-                                            self.latestAvatars[uid] = avatar
+                                            self.latestAvatars[record.user_id] = avatar
                                         }
                                     }
                                 }
@@ -3768,6 +3801,8 @@ struct RandomMatchHistoryView: View {
     let onDeleteHistoryItem: (RandomMatchHistory) -> Void
     let onReportUser: (String, String?, String?, String, String?, String?) -> Void
     let hasReportedUser: (String) -> Bool
+    let latestAvatars: [String: String]
+    let onTapAvatar: (String) -> Void
     
     @Environment(\.dismiss) private var dismiss
     @State private var showClearAlert = false
@@ -3804,7 +3839,9 @@ struct RandomMatchHistoryView: View {
                                 onReportUser: { userId, userName, userEmail, reason, deviceId, loginType in
                     onReportUser(userId, userName, userEmail, reason, deviceId, loginType)
                 },
-                                hasReportedUser: hasReportedUser
+                                hasReportedUser: hasReportedUser,
+                                latestAvatars: latestAvatars,
+                                onTapAvatar: onTapAvatar
                             )
                             .listRowInsets(EdgeInsets())
                             .listRowSeparator(.hidden)
