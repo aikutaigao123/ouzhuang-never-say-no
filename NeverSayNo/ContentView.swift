@@ -1637,7 +1637,8 @@ struct SearchView: View {
     @State private var pendingDeletionDate = "" // 新增：待删除日期
     @State private var showAvatarZoom = false // 新增：显示头像放大
     @State private var latestAvatars: [String: String] = [:] // 缓存 user_id -> 最新头像
-    @State private var currentAvatarForZoom: String? = nil // 提供给放大查看的初始头像
+    @State private var zoomToken: String? = nil // 点击各处头像时传入的放大显示token（emoji 或 SF Symbol 名）
+    @State private var zoomAllowRandom: Bool = false // 是否允许在放大视图中随机切换（仅自己头像）
     
     // 拉取并缓存指定用户的最新头像（仅当缓存不存在时）
     private func ensureLatestAvatar(userId: String?, loginType: String?) {
@@ -1676,20 +1677,16 @@ struct SearchView: View {
             HStack {
                 // 用户头像 - 可点击放大
                 Button(action: {
-                    var token: String? = nil
+                    // 计算自己的当前头像 token
                     if let userId = userManager.currentUser?.id,
                        let customAvatar = UserDefaults.standard.string(forKey: "custom_avatar_\(userId)") {
-                        token = customAvatar
+                        zoomToken = customAvatar
                     } else if let loginType = userManager.currentUser?.loginType {
-                        if loginType == .apple {
-                            token = "applelogo"
-                        } else if loginType == .`internal` {
-                            token = "person.circle.fill"
-                        } else {
-                            token = "person.circle"
-                        }
+                        zoomToken = (loginType == .apple ? "applelogo" : (loginType == .internal ? "person.circle.fill" : "👥"))
+                    } else {
+                        zoomToken = "👥"
                     }
-                    currentAvatarForZoom = token
+                    zoomAllowRandom = true
                     showAvatarZoom = true
                 }) {
                     // 检查是否有自定义头像
@@ -2080,12 +2077,14 @@ struct SearchView: View {
                                         .background(
                                             Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50)
                                         )
+                                        .onTapGesture { zoomToken = "applelogo"; zoomAllowRandom = false; showAvatarZoom = true }
                                 } else {
                                     Text(avatar)
                                         .font(.system(size: 32))
                                         .background(
                                             Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50)
                                         )
+                                        .onTapGesture { zoomToken = avatar; zoomAllowRandom = false; showAvatarZoom = true }
                                 }
                             } else {
                                 if record.login_type == "apple" {
@@ -2093,15 +2092,18 @@ struct SearchView: View {
                                         .font(.system(size: 32))
                                         .foregroundColor(.black)
                                         .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
+                                        .onTapGesture { zoomToken = "applelogo"; zoomAllowRandom = false; showAvatarZoom = true }
                                 } else if record.login_type == "internal" {
                                     Image(systemName: "person.circle.fill")
                                         .font(.system(size: 32))
                                         .foregroundColor(.purple)
                                         .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
+                                        .onTapGesture { zoomToken = "person.circle.fill"; zoomAllowRandom = false; showAvatarZoom = true }
                                 } else {
                                     Text(self.latestAvatars[record.user_id] ?? "👥")
                                         .font(.system(size: 32))
                                         .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
+                                        .onTapGesture { zoomToken = self.latestAvatars[record.user_id] ?? "👥"; zoomAllowRandom = false; showAvatarZoom = true }
                                 }
                             }
                         
@@ -2358,7 +2360,6 @@ struct SearchView: View {
         }
         .sheet(isPresented: $showRandomHistory) {
             RandomMatchHistoryView(
-                userManager: userManager,
                 history: randomMatchHistory,
                 calculateDistance: calculateDistance,
                 formatDistance: formatDistance,
@@ -2398,7 +2399,7 @@ struct SearchView: View {
             )
         }
         .sheet(isPresented: $showAvatarZoom) {
-            AvatarZoomView(userManager: userManager, showRandomButton: false, initialEmoji: currentAvatarForZoom)
+            AvatarZoomView(userManager: userManager, showRandomButton: zoomAllowRandom, initialToken: zoomToken)
         }
         .navigationBarBackButtonHidden(false)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
@@ -3783,7 +3784,6 @@ struct RandomRecordView: View {
 
 // 随机匹配历史视图
 struct RandomMatchHistoryView: View {
-    @ObservedObject var userManager: UserManager
     let history: [RandomMatchHistory]
     let calculateDistance: (CLLocation, Double, Double) -> Double
     let formatDistance: (Double) -> String
@@ -3798,9 +3798,6 @@ struct RandomMatchHistoryView: View {
     let hasReportedUser: (String) -> Bool
     let avatarResolver: (String?, String?, String?) -> String?
     let ensureLatestAvatar: (String?, String?) -> Void
-
-    @State private var showAvatarZoomInHistory = false
-    @State private var historyAvatarForZoom: String? = nil
     
     @Environment(\.dismiss) private var dismiss
     @State private var showClearAlert = false
@@ -3839,11 +3836,7 @@ struct RandomMatchHistoryView: View {
                 },
                                 hasReportedUser: hasReportedUser,
                                 avatarResolver: avatarResolver,
-                                ensureLatestAvatar: ensureLatestAvatar,
-                                onTapAvatar: { emoji in
-                                    historyAvatarForZoom = emoji
-                                    showAvatarZoomInHistory = true
-                                }
+                                ensureLatestAvatar: ensureLatestAvatar
                             )
                             .listRowInsets(EdgeInsets())
                             .listRowSeparator(.hidden)
@@ -3860,9 +3853,6 @@ struct RandomMatchHistoryView: View {
                     }
                     .listStyle(PlainListStyle())
                 }
-            }
-            .sheet(isPresented: $showAvatarZoomInHistory) {
-                AvatarZoomView(userManager: userManager, showRandomButton: false, initialEmoji: historyAvatarForZoom)
             }
             .navigationTitle("随机匹配历史")
             .navigationBarTitleDisplayMode(.large)
@@ -4069,7 +4059,6 @@ struct HistoryCardView: View {
     let hasReportedUser: (String) -> Bool
     let avatarResolver: (String?, String?, String?) -> String?
     let ensureLatestAvatar: (String?, String?) -> Void
-    let onTapAvatar: (String) -> Void
     
     // 计算并解析头像（优先最新 UserAvatarRecord）
     private var resolvedAvatar: String? {
@@ -4120,47 +4109,31 @@ struct HistoryCardView: View {
                 // 用户名和登录类型
                 HStack(spacing: 12) {
                     // 用户头像（历史卡片也以最新 UserAvatarRecord 为准）
-                    Group {
-                        if let a = resolvedAvatar {
-                            // 有明确头像
-                            if a == "apple_logo" {
-                                // 显示苹果符号
-                                let zoomToken = "applelogo"
-                                Image(systemName: "applelogo")
-                                    .font(.system(size: 24))
-                                    .foregroundColor(.black)
-                                    .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
-                                    .onTapGesture { onTapAvatar(zoomToken) }
-                            } else {
-                                // 显示 emoji 字符
-                                let zoomToken = a
-                                Text(a)
-                                    .font(.system(size: 24))
-                                    .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
-                                    .onTapGesture { onTapAvatar(zoomToken) }
-                            }
+                    if let a = resolvedAvatar {
+                        if a == "apple_logo" {
+                            Image(systemName: "applelogo")
+                                .font(.system(size: 24))
+                                .foregroundColor(.black)
+                                .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
+                                .onTapGesture { zoomToken = "applelogo"; zoomAllowRandom = false; showAvatarZoom = true }
                         } else {
-                            // 无明确头像，按登录类型回退
-                            ZStack {
-                                Circle().fill(getUserTypeBackground(historyItem.record.login_type)).frame(width: 40, height: 40)
-                                if historyItem.record.login_type == "apple" {
-                                    let zoomToken = "applelogo"
-                                    Image(systemName: "applelogo")
-                                        .foregroundColor(.black)
-                                        .font(.system(size: 18, weight: .medium))
-                                        .onTapGesture { onTapAvatar(zoomToken) }
-                                } else if historyItem.record.login_type == "internal" {
-                                    let zoomToken = "person.circle.fill"
-                                    Image(systemName: "person.circle.fill")
-                                        .foregroundColor(.purple)
-                                        .font(.system(size: 18, weight: .medium))
-                                        .onTapGesture { onTapAvatar(zoomToken) }
-                                } else {
-                                    let zoomToken = "👥"
-                                    Text("👥")
-                                        .font(.system(size: 18))
-                                        .onTapGesture { onTapAvatar(zoomToken) }
-                                }
+                            Text(a)
+                                .font(.system(size: 24))
+                                .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
+                                .onTapGesture { zoomToken = a; zoomAllowRandom = false; showAvatarZoom = true }
+                        }
+                    } else {
+                        ZStack {
+                            Circle().fill(getUserTypeBackground(historyItem.record.login_type)).frame(width: 40, height: 40)
+                            if historyItem.record.login_type == "apple" {
+                                Image(systemName: "applelogo").foregroundColor(.black).font(.system(size: 18, weight: .medium))
+                                    .onTapGesture { zoomToken = "applelogo"; zoomAllowRandom = false; showAvatarZoom = true }
+                            } else if historyItem.record.login_type == "internal" {
+                                Image(systemName: "person.circle.fill").foregroundColor(.purple).font(.system(size: 18, weight: .medium))
+                                    .onTapGesture { zoomToken = "person.circle.fill"; zoomAllowRandom = false; showAvatarZoom = true }
+                            } else {
+                                Text("👥").font(.system(size: 18))
+                                    .onTapGesture { zoomToken = "👥"; zoomAllowRandom = false; showAvatarZoom = true }
                             }
                         }
                     }
@@ -5204,7 +5177,7 @@ struct ProfileView: View {
                 Text("删除账户后，您的账户将在7天后自动删除。期间如果重新登录，删除请求将被取消。确定要删除账户吗？")
             }
             .sheet(isPresented: $showAvatarZoom) {
-                AvatarZoomView(userManager: userManager, showRandomButton: true, initialEmoji: nil)
+                AvatarZoomView(userManager: userManager, showRandomButton: true)
             }
 
         }
@@ -5878,14 +5851,11 @@ struct AvatarZoomView: View {
     @State private var alertMessage = ""
     @State private var timer: Timer?
     let showRandomButton: Bool // 控制是否显示随机切换按钮
-    let initialEmoji: String? // 可选：用于查看他人头像时的初始表情
-    
+    let initialToken: String?
     // 添加一个计算属性来获取当前头像
     private var displayAvatar: String? {
         return currentAvatarEmoji
     }
-    // 是否在查看他人头像（来自历史）
-    private var isViewingOther: Bool { initialEmoji != nil }
     
     var body: some View {
         NavigationView {
@@ -5936,27 +5906,25 @@ struct AvatarZoomView: View {
                     }
                 }
                 
-                // 用户信息（仅在查看自己时显示；查看他人时隐藏登录类型/信息）
-                if !isViewingOther {
-                    VStack(spacing: 10) {
-                        Text(userManager.currentUser?.fullName ?? "未知用户")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(.primary)
-                        
-                        if let loginType = userManager.currentUser?.loginType {
-                            let loginTypeText = loginType == .apple ? "Apple账户" : 
-                                              loginType == .`internal` ? "内部用户" : "游客模式"
-                            Text(loginTypeText)
-                                .font(.headline)
-                                .foregroundColor(.gray)
-                        }
-                        
-                        if let email = userManager.currentUser?.email, !email.isEmpty {
-                            Text(email)
-                                .font(.body)
-                                .foregroundColor(.blue)
-                        }
+                // 用户信息
+                VStack(spacing: 10) {
+                    Text(userManager.currentUser?.fullName ?? "未知用户")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                    
+                    if let loginType = userManager.currentUser?.loginType {
+                        let loginTypeText = loginType == .apple ? "Apple账户" : 
+                                          loginType == .`internal` ? "内部用户" : "游客模式"
+                        Text(loginTypeText)
+                            .font(.headline)
+                            .foregroundColor(.gray)
+                    }
+                    
+                    if let email = userManager.currentUser?.email, !email.isEmpty {
+                        Text(email)
+                            .font(.body)
+                            .foregroundColor(.blue)
                     }
                 }
                 
@@ -5994,10 +5962,8 @@ struct AvatarZoomView: View {
                 Text(alertMessage)
             }
             .onAppear {
-                // 只在传入时设置，取消回退到本地保存头像
-                if let initial = initialEmoji {
-                    currentAvatarEmoji = initial
-                }
+                // 初始化头像显示
+                if let token = initialToken, !token.isEmpty { currentAvatarEmoji = token }
             }
             .onDisappear {
                 // 停止定时器
