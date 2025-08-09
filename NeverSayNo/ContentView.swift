@@ -78,6 +78,7 @@ struct DiamondRecord: Codable, Identifiable {
 // 举报记录结构体
 struct ReportRecord: Codable, Identifiable {
     let id: UUID
+    let objectId: String?
     let reportedUserId: String
     let reportedUserName: String?
     let reportedUserEmail: String?
@@ -99,8 +100,10 @@ struct ReportRecord: Codable, Identifiable {
          reporterUserId: String,
          reporterUserName: String?,
          reporterUserAvatar: String? = nil,
-         status: String? = nil) {
+         status: String? = nil,
+         objectId: String? = nil) {
         self.id = UUID()
+        self.objectId = objectId
         self.reportedUserId = reportedUserId
         self.reportedUserName = reportedUserName
         self.reportedUserEmail = reportedUserEmail
@@ -5537,13 +5540,13 @@ struct ReportRecordProcessingView: View {
                     // 过滤掉被举报人是内部用户的记录和已处理的记录
                     let filteredRecords = reportRecords.filter { record in
                         record.reportedUserLoginType != "internal" && 
-                        !processedRecordIds.contains(record.id)
+                        !(record.objectId != nil && processedRecordIds.contains(record.objectId!))
                     }
                     
                     // 转换为UI数据模型
                     self.reportRecords = filteredRecords.map { record in
                         ReportRecordUI(
-                            id: record.id,
+                            id: record.objectId ?? record.id.uuidString,
                             reporterName: record.reporterUserName,
                             reportedName: record.reportedUserName,
                             reportedUserAvatar: record.reportedUserAvatar,
