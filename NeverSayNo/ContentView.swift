@@ -1635,10 +1635,9 @@ struct SearchView: View {
     @State private var copySuccessMessage = "" // 新增：复制成功消息
     @State private var showCancelDeletionAlert = false // 新增：显示取消删除确认对话框
     @State private var pendingDeletionDate = "" // 新增：待删除日期
-    @State private var showAvatarZoom = false // 新增：显示头像放大（自己的）
-    @State private var showOtherAvatarZoom = false // 新增：显示他人头像放大
-    @State private var otherAvatarToZoom: String? = nil // 新增：他人头像内容
+    @State private var showAvatarZoom = false // 新增：显示头像放大
     @State private var latestAvatars: [String: String] = [:] // 缓存 user_id -> 最新头像
+    @State private var currentAvatarForZoom: String? = nil // 提供给放大查看的初始头像
     
     // 拉取并缓存指定用户的最新头像（仅当缓存不存在时）
     private func ensureLatestAvatar(userId: String?, loginType: String?) {
@@ -2067,14 +2066,12 @@ struct SearchView: View {
                                         .background(
                                             Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50)
                                         )
-                                        .onTapGesture { otherAvatarToZoom = avatar; showOtherAvatarZoom = true }
                                 } else {
                                     Text(avatar)
                                         .font(.system(size: 32))
                                         .background(
                                             Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50)
                                         )
-                                        .onTapGesture { otherAvatarToZoom = avatar; showOtherAvatarZoom = true }
                                 }
                             } else {
                                 if record.login_type == "apple" {
@@ -2082,19 +2079,15 @@ struct SearchView: View {
                                         .font(.system(size: 32))
                                         .foregroundColor(.black)
                                         .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
-                                        .onTapGesture { otherAvatarToZoom = latestAvatars[record.user_id] ?? "🍎"; showOtherAvatarZoom = true }
                                 } else if record.login_type == "internal" {
                                     Image(systemName: "person.circle.fill")
                                         .font(.system(size: 32))
                                         .foregroundColor(.purple)
                                         .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
-                                        .onTapGesture { otherAvatarToZoom = latestAvatars[record.user_id] ?? "👤"; showOtherAvatarZoom = true }
                                 } else {
-                                    let disp = self.latestAvatars[record.user_id] ?? "👥"
-                                    Text(disp)
+                                    Text(self.latestAvatars[record.user_id] ?? "👥")
                                         .font(.system(size: 32))
                                         .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
-                                        .onTapGesture { otherAvatarToZoom = disp; showOtherAvatarZoom = true }
                                 }
                             }
                         
@@ -2390,10 +2383,7 @@ struct SearchView: View {
             )
         }
         .sheet(isPresented: $showAvatarZoom) {
-            AvatarZoomView(userManager: userManager, showRandomButton: false)
-        }
-        .sheet(isPresented: $showOtherAvatarZoom) {
-            AvatarZoomView(userManager: userManager, showRandomButton: false)
+            AvatarZoomView(userManager: userManager, showRandomButton: false, initialEmoji: currentAvatarForZoom)
         }
         .navigationBarBackButtonHidden(false)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
@@ -3790,7 +3780,6 @@ struct RandomMatchHistoryView: View {
     let onDeleteHistoryItem: (RandomMatchHistory) -> Void
     let onReportUser: (String, String?, String?, String, String?, String?) -> Void
     let hasReportedUser: (String) -> Bool
-    let onTapAvatar: (String) -> Void
     let avatarResolver: (String?, String?, String?) -> String?
     let ensureLatestAvatar: (String?, String?) -> Void
     
@@ -3830,10 +3819,6 @@ struct RandomMatchHistoryView: View {
                     onReportUser(userId, userName, userEmail, reason, deviceId, loginType)
                 },
                                 hasReportedUser: hasReportedUser,
-                                onTapAvatar: { avatar in
-                                    otherAvatarToZoom = avatar
-                                    showOtherAvatarZoom = true
-                                },
                                 avatarResolver: avatarResolver,
                                 ensureLatestAvatar: ensureLatestAvatar
                             )
@@ -4054,9 +4039,8 @@ struct HistoryCardView: View {
     let formatTimestamp: (String, String?) -> String
     let calculateTimezoneFromLongitude: (Double) -> String
     let getTimezoneName: (Double) -> String
-    let onReportUser: (String, String?, String?, String, String?, String?) -> Void
+            let onReportUser: (String, String?, String?, String, String?, String?) -> Void
     let hasReportedUser: (String) -> Bool
-    let onTapAvatar: (String) -> Void
     let avatarResolver: (String?, String?, String?) -> String?
     let ensureLatestAvatar: (String?, String?) -> Void
     
@@ -4115,25 +4099,22 @@ struct HistoryCardView: View {
                                 .font(.system(size: 24))
                                 .foregroundColor(.black)
                                 .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
-                                .onTapGesture { otherAvatarToZoom = a; showOtherAvatarZoom = true }
+                                .onTapGesture { showAvatarZoom = true; currentAvatarForZoom = a }
                         } else {
                             Text(a)
                                 .font(.system(size: 24))
                                 .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
-                                .onTapGesture { otherAvatarToZoom = a; showOtherAvatarZoom = true }
+                                .onTapGesture { showAvatarZoom = true; currentAvatarForZoom = a }
                         }
                     } else {
                         ZStack {
                             Circle().fill(getUserTypeBackground(historyItem.record.login_type)).frame(width: 40, height: 40)
                             if historyItem.record.login_type == "apple" {
-                                Image(systemName: "applelogo").foregroundColor(.black).font(.system(size: 18, weight: .medium))
-                                    .onTapGesture { otherAvatarToZoom = resolvedAvatar ?? "🍎"; showOtherAvatarZoom = true }
+                                Image(systemName: "applelogo").foregroundColor(.black).font(.system(size: 18, weight: .medium)).onTapGesture { showAvatarZoom = true; currentAvatarForZoom = "applelogo" }
                             } else if historyItem.record.login_type == "internal" {
-                                Image(systemName: "person.circle.fill").foregroundColor(.purple).font(.system(size: 18, weight: .medium))
-                                    .onTapGesture { otherAvatarToZoom = resolvedAvatar ?? "👤"; showOtherAvatarZoom = true }
+                                Image(systemName: "person.circle.fill").foregroundColor(.purple).font(.system(size: 18, weight: .medium)).onTapGesture { showAvatarZoom = true; currentAvatarForZoom = "person.circle.fill" }
                             } else {
-                                Text("👥").font(.system(size: 18))
-                                    .onTapGesture { otherAvatarToZoom = resolvedAvatar ?? "👥"; showOtherAvatarZoom = true }
+                                Text("👥").font(.system(size: 18)).onTapGesture { showAvatarZoom = true; currentAvatarForZoom = "👥" }
                             }
                         }
                     }
@@ -5851,6 +5832,7 @@ struct AvatarZoomView: View {
     @State private var alertMessage = ""
     @State private var timer: Timer?
     let showRandomButton: Bool // 控制是否显示随机切换按钮
+    let initialEmoji: String? // 可选：用于查看他人头像时的初始表情
     
     // 添加一个计算属性来获取当前头像
     private var displayAvatar: String? {
@@ -5963,25 +5945,14 @@ struct AvatarZoomView: View {
             }
             .onAppear {
                 // 初始化头像显示
-                print("🎭 AvatarZoomView 视图加载")
-                
-                // 加载已保存的头像
                 if currentAvatarEmoji == nil {
+                    if let initial = initialEmoji {
+                        currentAvatarEmoji = initial
+                    } else {
                     if let userId = userManager.currentUser?.id,
                        let savedEmoji = UserDefaults.standard.string(forKey: "custom_avatar_\(userId)") {
                         currentAvatarEmoji = savedEmoji
-                        print("🎭 从UserDefaults加载头像: \(savedEmoji)")
-                    } else {
-                        print("🎭 初始化头像显示，当前为nil")
                     }
-                } else {
-                    print("🎭 当前头像: \(currentAvatarEmoji ?? "nil")")
-                }
-                
-                // 启动定时器，每3秒输出当前状态
-                timer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { _ in
-                    print("⏰ 定时器检查 - currentAvatarEmoji: \(currentAvatarEmoji ?? "nil")")
-                    print("⏰ 定时器检查 - displayAvatar: \(displayAvatar ?? "nil")")
                 }
             }
             .onDisappear {
