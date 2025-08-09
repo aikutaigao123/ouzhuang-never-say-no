@@ -1636,6 +1636,7 @@ struct SearchView: View {
     @State private var showCancelDeletionAlert = false // 新增：显示取消删除确认对话框
     @State private var pendingDeletionDate = "" // 新增：待删除日期
     @State private var showAvatarZoom = false // 新增：显示头像放大
+    @State private var latestAvatars: [String: String] = [:] // 缓存 user_id -> 最新头像
     
     // 权限状态文本
     var authorizationStatusText: String {
@@ -2036,58 +2037,46 @@ struct SearchView: View {
                 VStack(spacing: 15) {
                     // 用户头像和用户名信息 - 最重要的信息，使用大字体
                     HStack(spacing: 12) {
-                        // 显示用户头像
-                        if let userAvatar = record.user_avatar, !userAvatar.isEmpty {
-                            if userAvatar == "apple_logo" {
-                                // 显示Apple logo SF Symbol
-                                Image(systemName: "applelogo")
-                                    .font(.system(size: 32))
-                                    .foregroundColor(.black)
-                                    .background(
-                                        Circle()
-                                            .fill(Color.gray.opacity(0.1))
-                                            .frame(width: 50, height: 50)
-                                    )
+                            // 显示用户头像（优先取最新 UserAvatarRecord）
+                            let displayAvatar: String? = {
+                                if let uid = record.user_id, let latest = latestAvatars[uid], !latest.isEmpty {
+                                    return latest
+                                }
+                                return record.user_avatar
+                            }()
+
+                            if let avatar = displayAvatar, !avatar.isEmpty {
+                                if avatar == "apple_logo" {
+                                    Image(systemName: "applelogo")
+                                        .font(.system(size: 32))
+                                        .foregroundColor(.black)
+                                        .background(
+                                            Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50)
+                                        )
+                                } else {
+                                    Text(avatar)
+                                        .font(.system(size: 32))
+                                        .background(
+                                            Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50)
+                                        )
+                                }
                             } else {
-                                // 显示其他emoji头像
-                                Text(userAvatar)
-                                    .font(.system(size: 32))
-                                    .background(
-                                        Circle()
-                                            .fill(Color.gray.opacity(0.1))
-                                            .frame(width: 50, height: 50)
-                                    )
+                                if record.login_type == "apple" {
+                                    Image(systemName: "applelogo")
+                                        .font(.system(size: 32))
+                                        .foregroundColor(.black)
+                                        .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
+                                } else if record.login_type == "internal" {
+                                    Image(systemName: "person.circle.fill")
+                                        .font(.system(size: 32))
+                                        .foregroundColor(.purple)
+                                        .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
+                                } else {
+                                    Text(self.latestAvatars[record.user_id ?? ""] ?? "👥")
+                                        .font(.system(size: 32))
+                                        .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
+                                }
                             }
-                        } else {
-                            // 如果没有头像，根据用户类型显示默认头像
-                            if record.login_type == "apple" {
-                                Image(systemName: "applelogo")
-                                    .font(.system(size: 32))
-                                    .foregroundColor(.black)
-                                    .background(
-                                        Circle()
-                                            .fill(Color.gray.opacity(0.1))
-                                            .frame(width: 50, height: 50)
-                                    )
-                            } else if record.login_type == "internal" {
-                                Image(systemName: "person.circle.fill")
-                                    .font(.system(size: 32))
-                                    .foregroundColor(.purple)
-                                    .background(
-                                        Circle()
-                                            .fill(Color.gray.opacity(0.1))
-                                            .frame(width: 50, height: 50)
-                                    )
-                            } else {
-                                Text("👥")
-                                    .font(.system(size: 32))
-                                    .background(
-                                        Circle()
-                                            .fill(Color.gray.opacity(0.1))
-                                            .frame(width: 50, height: 50)
-                                    )
-                            }
-                        }
                         
                         VStack(alignment: .leading, spacing: 4) {
                             // 用户名
@@ -2874,6 +2863,16 @@ struct SearchView: View {
                             }
                             
                             self.randomRecord = record
+                            // 异步刷新对方头像为最新 UserAvatarRecord
+                            if let uid = record.user_id, let ltype = record.login_type {
+                                LeanCloudService.shared.fetchUserAvatar(userId: uid, loginType: ltype) { avatar, _ in
+                                    DispatchQueue.main.async {
+                                        if let avatar = avatar, !avatar.isEmpty {
+                                            self.latestAvatars[uid] = avatar
+                                        }
+                                    }
+                                }
+                            }
                             // 为随机记录分配一个序号（1到总数之间）
                             self.randomRecordNumber = Int.random(in: 1...max(1, totalRecords))
                             
