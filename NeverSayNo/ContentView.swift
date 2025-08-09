@@ -2356,7 +2356,14 @@ struct SearchView: View {
                 onReportUser: { userId, userName, userEmail, reason, deviceId, loginType in
                     addReportRecord(reportedUserId: userId, reportedUserName: userName, reportedUserEmail: userEmail, reportReason: reason, reportedDeviceId: deviceId, reportedUserLoginType: loginType)
                 },
-                hasReportedUser: hasReportedUser
+                hasReportedUser: hasReportedUser,
+                avatarResolver: { uid, ltype, snapshot in
+                    if let uid = uid, let latest = latestAvatars[uid], !latest.isEmpty { return latest }
+                    return snapshot
+                },
+                ensureLatestAvatar: { uid, ltype in
+                    ensureLatestAvatar(userId: uid, loginType: ltype)
+                }
             )
         }
         .sheet(isPresented: $showRechargeSheet) {
@@ -3772,6 +3779,8 @@ struct RandomMatchHistoryView: View {
     let onDeleteHistoryItem: (RandomMatchHistory) -> Void
     let onReportUser: (String, String?, String?, String, String?, String?) -> Void
     let hasReportedUser: (String) -> Bool
+    let avatarResolver: (String?, String?, String?) -> String?
+    let ensureLatestAvatar: (String?, String?) -> Void
     
     @Environment(\.dismiss) private var dismiss
     @State private var showClearAlert = false
@@ -3808,7 +3817,9 @@ struct RandomMatchHistoryView: View {
                                 onReportUser: { userId, userName, userEmail, reason, deviceId, loginType in
                     onReportUser(userId, userName, userEmail, reason, deviceId, loginType)
                 },
-                                hasReportedUser: hasReportedUser
+                                hasReportedUser: hasReportedUser,
+                                avatarResolver: avatarResolver,
+                                ensureLatestAvatar: ensureLatestAvatar
                             )
                             .listRowInsets(EdgeInsets())
                             .listRowSeparator(.hidden)
@@ -4029,6 +4040,8 @@ struct HistoryCardView: View {
     let getTimezoneName: (Double) -> String
             let onReportUser: (String, String?, String?, String, String?, String?) -> Void
     let hasReportedUser: (String) -> Bool
+    let avatarResolver: (String?, String?, String?) -> String?
+    let ensureLatestAvatar: (String?, String?) -> Void
     
     @State private var showReportSheet = false
     @State private var selectedReportReason = "不当内容"
@@ -4074,9 +4087,8 @@ struct HistoryCardView: View {
                 // 用户名和登录类型
                 HStack(spacing: 12) {
                     // 用户头像（历史卡片也以最新 UserAvatarRecord 为准）
-                    let latest = latestAvatars[historyItem.record.user_id]
-                    let snapshot = historyItem.record.user_avatar
-                    let avatar = (latest?.isEmpty == false ? latest : (snapshot?.isEmpty == false ? snapshot : nil))
+                    ensureLatestAvatar(historyItem.record.user_id, historyItem.record.login_type)
+                    let avatar = avatarResolver(historyItem.record.user_id, historyItem.record.login_type, historyItem.record.user_avatar)
                     if let a = avatar {
                         if a == "apple_logo" {
                             Image(systemName: "applelogo")
