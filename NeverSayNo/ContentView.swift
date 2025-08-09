@@ -3782,6 +3782,7 @@ struct RandomMatchHistoryView: View {
     let hasReportedUser: (String) -> Bool
     let avatarResolver: (String?, String?, String?) -> String?
     let ensureLatestAvatar: (String?, String?) -> Void
+    let onTapAvatar: (String) -> Void
     
     @Environment(\.dismiss) private var dismiss
     @State private var showClearAlert = false
@@ -3820,7 +3821,11 @@ struct RandomMatchHistoryView: View {
                 },
                                 hasReportedUser: hasReportedUser,
                                 avatarResolver: avatarResolver,
-                                ensureLatestAvatar: ensureLatestAvatar
+                                ensureLatestAvatar: ensureLatestAvatar,
+                                onTapAvatar: { emoji in
+                                    currentAvatarForZoom = emoji
+                                    showAvatarZoom = true
+                                }
                             )
                             .listRowInsets(EdgeInsets())
                             .listRowSeparator(.hidden)
@@ -4099,22 +4104,22 @@ struct HistoryCardView: View {
                                 .font(.system(size: 24))
                                 .foregroundColor(.black)
                                 .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
-                                .onTapGesture { showAvatarZoom = true; currentAvatarForZoom = a }
+                                .onTapGesture { onTapAvatar("applelogo") }
                         } else {
                             Text(a)
                                 .font(.system(size: 24))
                                 .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
-                                .onTapGesture { showAvatarZoom = true; currentAvatarForZoom = a }
+                                .onTapGesture { onTapAvatar(a) }
                         }
                     } else {
                         ZStack {
                             Circle().fill(getUserTypeBackground(historyItem.record.login_type)).frame(width: 40, height: 40)
                             if historyItem.record.login_type == "apple" {
-                                Image(systemName: "applelogo").foregroundColor(.black).font(.system(size: 18, weight: .medium)).onTapGesture { showAvatarZoom = true; currentAvatarForZoom = "applelogo" }
+                                Image(systemName: "applelogo").foregroundColor(.black).font(.system(size: 18, weight: .medium)).onTapGesture { onTapAvatar("applelogo") }
                             } else if historyItem.record.login_type == "internal" {
-                                Image(systemName: "person.circle.fill").foregroundColor(.purple).font(.system(size: 18, weight: .medium)).onTapGesture { showAvatarZoom = true; currentAvatarForZoom = "person.circle.fill" }
+                                Image(systemName: "person.circle.fill").foregroundColor(.purple).font(.system(size: 18, weight: .medium)).onTapGesture { onTapAvatar("person.circle.fill") }
                             } else {
-                                Text("👥").font(.system(size: 18)).onTapGesture { showAvatarZoom = true; currentAvatarForZoom = "👥" }
+                                Text("👥").font(.system(size: 18)).onTapGesture { onTapAvatar("👥") }
                             }
                         }
                     }
@@ -5158,7 +5163,7 @@ struct ProfileView: View {
                 Text("删除账户后，您的账户将在7天后自动删除。期间如果重新登录，删除请求将被取消。确定要删除账户吗？")
             }
             .sheet(isPresented: $showAvatarZoom) {
-                AvatarZoomView(userManager: userManager, showRandomButton: true)
+                AvatarZoomView(userManager: userManager, showRandomButton: true, initialEmoji: nil)
             }
 
         }
