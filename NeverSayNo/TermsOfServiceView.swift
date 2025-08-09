@@ -23,11 +23,11 @@ struct TermsOfServiceView: View {
                         .font(.body)
                         .fontWeight(.medium)
                     
-                    Text("1. 服务描述")
+                    Text("1. 服务描述与定位使用说明")
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    Text("本应用提供基于位置的用户匹配服务，帮助用户找到附近的其他用户。服务包括但不限于：")
+                    Text("本应用提供基于位置的用户匹配服务，帮助用户找到附近的其他用户。仅在您主动使用“寻找”功能并授权定位时获取位置信息，不在后台持续定位。服务包括但不限于：")
                         .font(.body)
                     
                     Text("• 位置匹配服务")
@@ -94,11 +94,13 @@ struct TermsOfServiceView: View {
                     Text("• 不得复制、修改或分发应用代码")
                         .font(.body)
                     
-                    Text("5. 隐私保护")
+                    Text("5. 隐私与数据保护")
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    Text("我们重视您的隐私保护，具体政策请参见《隐私政策》。您同意我们按照隐私政策收集、使用和保护您的个人信息。")
+                    Text("我们重视您的隐私。请阅读《隐私政策》了解我们收集与使用信息的类型、目的、保存期限及您的权利（访问、更正、删除、撤回同意等）。")
+                        .font(.body)
+                    Text("当您撤回定位授权或关闭相关权限后，部分功能将无法使用。")
                         .font(.body)
                     
                     Text("6. 服务变更")
@@ -114,7 +116,7 @@ struct TermsOfServiceView: View {
                     Text("• 我们不承担因服务中断造成的损失")
                         .font(.body)
                     
-                    Text("7. 付费服务")
+                    Text("7. 付费与虚拟货币")
                         .font(.title2)
                         .fontWeight(.bold)
                     
@@ -126,7 +128,7 @@ struct TermsOfServiceView: View {
                         .font(.body)
                     Text("• 购买后立即生效")
                         .font(.body)
-                    Text("• 遵守 Apple 的付费服务条款")
+                    Text("• 遵守 Apple 的付费条款与平台政策（例如订阅与内购）")
                         .font(.body)
                     
                     Text("8. 免责声明")
@@ -144,11 +146,15 @@ struct TermsOfServiceView: View {
                     Text("• 其他用户的行为不代表我们的立场")
                         .font(.body)
                     
-                    Text("9. 责任限制")
+                    Text("9. 责任限制与安全")
                         .font(.title2)
                         .fontWeight(.bold)
                     
                     Text("在法律允许的最大范围内，我们的责任不超过您支付的费用金额。某些司法管辖区不允许责任限制，因此这些限制可能不适用于您。")
+                        .font(.body)
+                    Text("• 我们不承担因不可抗力、第三方服务中断等引起的间接或偶然损失")
+                        .font(.body)
+                    Text("• 我们采取合理技术与管理措施保障安全，但不保证绝对安全")
                         .font(.body)
                     
                     Text("10. 协议终止")
@@ -164,7 +170,7 @@ struct TermsOfServiceView: View {
                     Text("• 我们会删除您的账户数据")
                         .font(.body)
                     
-                    Text("11. 争议解决")
+                    Text("11. 争议解决与适用法律")
                         .font(.title2)
                         .fontWeight(.bold)
                     
