@@ -1273,23 +1273,17 @@ class LeanCloudService: ObservableObject {
         // 获取邮箱（从UserDefaults或使用默认值）
         let userEmail = UserDefaults.standard.string(forKey: "current_user_email") ?? ""
         
-        // 获取用户头像信息
-        let userAvatar: String
-        if let customEmoji = UserDefaults.standard.string(forKey: "custom_avatar_\(userId)") {
-            userAvatar = customEmoji
-        } else {
-            // 根据用户类型设置默认头像
-            switch loginType {
-            case "apple":
-                userAvatar = "🍎" // Apple logo emoji
-            case "internal":
-                userAvatar = "👤" // 内部用户 emoji
-            case "guest":
-                userAvatar = "👥" // 游客 emoji
-            default:
-                userAvatar = "👤" // 默认 emoji
+        // 获取用户头像信息（优先自定义，其次随机分配并持久化）
+        let userAvatar: String = {
+            if let customEmoji = UserDefaults.standard.string(forKey: "custom_avatar_\(userId)") {
+                return customEmoji
             }
-        }
+            let rand = EmojiList.allEmojis.randomElement() ?? "🙂"
+            UserDefaults.standard.set(rand, forKey: "custom_avatar_\(userId)")
+            // 尝试在服务器写入头像记录（忽略失败）
+            self.createUserAvatarRecord(userId: userId, loginType: loginType, userAvatar: rand) { _ in }
+            return rand
+        }()
         
         let diamondData: [String: Any] = [
             "user_id": userId,
@@ -2098,14 +2092,10 @@ class LeanCloudService: ObservableObject {
                                         reportedUserId: reportedUserId,
                                         reportedUserName: reportDict["reported_user_name"] as? String,
                                         reportedUserEmail: reportDict["reported_user_email"] as? String,
-                                        reportedUserAvatar: reportDict["reported_user_avatar"] as? String,
-                                        reportedUserLoginType: reportDict["reported_user_login_type"] as? String,
                                         reportReason: reportReason,
                                         reporterUserId: reporterUserId,
                                         reporterUserName: reportDict["reporter_user_name"] as? String,
-                                        reporterUserAvatar: reportDict["reporter_user_avatar"] as? String,
-                                        status: reportDict["status"] as? String,
-                                        objectId: reportDict["objectId"] as? String
+                                        status: reportDict["status"] as? String
                                     )
                                 }
                                 
@@ -3153,8 +3143,10 @@ class LeanCloudService: ObservableObject {
         setLeanCloudHeaders(&request)
         request.timeoutInterval = 10.0
         
-        // 获取用户头像信息（内部用户使用默认头像）
-        let userAvatar = "👤" // 内部用户默认头像
+        // 获取用户头像信息（使用真实/自定义emoji头像）
+        let userDefaults = UserDefaults.standard
+        let currentUserId = userDefaults.string(forKey: "current_user_id")
+        let userAvatar = (currentUserId != nil ? userDefaults.string(forKey: "custom_avatar_\(currentUserId!)") : nil) ?? "👤"
         
         // 构建登录记录数据
         let loginRecordData: [String: Any] = [
