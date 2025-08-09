@@ -3790,6 +3790,7 @@ struct RandomMatchHistoryView: View {
     let onDeleteHistoryItem: (RandomMatchHistory) -> Void
     let onReportUser: (String, String?, String?, String, String?, String?) -> Void
     let hasReportedUser: (String) -> Bool
+    let onTapAvatar: (String) -> Void
     let avatarResolver: (String?, String?, String?) -> String?
     let ensureLatestAvatar: (String?, String?) -> Void
     
@@ -3829,6 +3830,10 @@ struct RandomMatchHistoryView: View {
                     onReportUser(userId, userName, userEmail, reason, deviceId, loginType)
                 },
                                 hasReportedUser: hasReportedUser,
+                                onTapAvatar: { avatar in
+                                    otherAvatarToZoom = avatar
+                                    showOtherAvatarZoom = true
+                                },
                                 avatarResolver: avatarResolver,
                                 ensureLatestAvatar: ensureLatestAvatar
                             )
@@ -4049,8 +4054,9 @@ struct HistoryCardView: View {
     let formatTimestamp: (String, String?) -> String
     let calculateTimezoneFromLongitude: (Double) -> String
     let getTimezoneName: (Double) -> String
-            let onReportUser: (String, String?, String?, String, String?, String?) -> Void
+    let onReportUser: (String, String?, String?, String, String?, String?) -> Void
     let hasReportedUser: (String) -> Bool
+    let onTapAvatar: (String) -> Void
     let avatarResolver: (String?, String?, String?) -> String?
     let ensureLatestAvatar: (String?, String?) -> Void
     
