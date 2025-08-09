@@ -4886,6 +4886,7 @@ struct ProfileView: View {
     @State private var showReportRecordProcessing = false // 新增：显示举报记录处理界面
     @State private var showEditNameAlert = false // 本地处理用户名修改alert
     @State private var showAvatarZoom = false // 新增：显示头像放大查看界面
+    @State private var profileZoomToken: String? = nil // 新增：头像放大初始token
     
     var body: some View {
         NavigationStack {
@@ -4895,6 +4896,15 @@ struct ProfileView: View {
                         HStack {
                             // 头像 - 可点击放大查看
                             Button(action: {
+                                // 计算本人头像 token
+                                if let userId = userManager.currentUser?.id,
+                                   let customAvatar = UserDefaults.standard.string(forKey: "custom_avatar_\(userId)") {
+                                    profileZoomToken = customAvatar
+                                } else if let loginType = userManager.currentUser?.loginType {
+                                    profileZoomToken = (loginType == .apple ? "applelogo" : (loginType == .internal ? "person.circle.fill" : "👥"))
+                                } else {
+                                    profileZoomToken = "👥"
+                                }
                                 showAvatarZoom = true
                             }) {
                                 // 检查是否有自定义头像
@@ -4986,8 +4996,9 @@ struct ProfileView: View {
                     HStack {
                         if let email = userManager.currentUser?.email {
                             let emailText = "✉️ \(email)"
+                            let emailFontSize: CGFloat = 38 // 原为 17 * 2.26，简化以降低类型推断复杂度
                             Text(emailText)
-                                .font(.system(size: 17 * 2.26))
+                                .font(.system(size: emailFontSize))
                                 .foregroundColor(.gray)
                             
                             // 只有 Apple ID 用户才显示编辑按钮
@@ -5002,8 +5013,9 @@ struct ProfileView: View {
                                 }
                             }
                         } else {
+                            let emailFontSize: CGFloat = 38
                             Text("✉️ 无")
-                                .font(.system(size: 17 * 2.26))
+                                .font(.system(size: emailFontSize))
                                 .foregroundColor(.gray)
                         }
                         Spacer()
@@ -5189,7 +5201,7 @@ struct ProfileView: View {
                 Text("删除账户后，您的账户将在7天后自动删除。期间如果重新登录，删除请求将被取消。确定要删除账户吗？")
             }
             .sheet(isPresented: $showAvatarZoom) {
-                AvatarZoomView(userManager: userManager, showRandomButton: true)
+                AvatarZoomView(userManager: userManager, showRandomButton: true, initialToken: profileZoomToken)
             }
 
         }
