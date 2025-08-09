@@ -78,42 +78,24 @@ struct DiamondRecord: Codable, Identifiable {
 // 举报记录结构体
 struct ReportRecord: Codable, Identifiable {
     let id: UUID
-    let objectId: String?
     let reportedUserId: String
     let reportedUserName: String?
     let reportedUserEmail: String?
-    let reportedUserAvatar: String?
-    let reportedUserLoginType: String?
     let reportReason: String
     let reportTime: Date
     let reporterUserId: String
     let reporterUserName: String?
-    let reporterUserAvatar: String?
     let status: String?
     
-    init(reportedUserId: String,
-         reportedUserName: String?,
-         reportedUserEmail: String?,
-         reportedUserAvatar: String? = nil,
-         reportedUserLoginType: String? = nil,
-         reportReason: String,
-         reporterUserId: String,
-         reporterUserName: String?,
-         reporterUserAvatar: String? = nil,
-         status: String? = nil,
-         objectId: String? = nil) {
+    init(reportedUserId: String, reportedUserName: String?, reportedUserEmail: String?, reportReason: String, reporterUserId: String, reporterUserName: String?, status: String? = nil) {
         self.id = UUID()
-        self.objectId = objectId
         self.reportedUserId = reportedUserId
         self.reportedUserName = reportedUserName
         self.reportedUserEmail = reportedUserEmail
-        self.reportedUserAvatar = reportedUserAvatar
-        self.reportedUserLoginType = reportedUserLoginType
         self.reportReason = reportReason
         self.reportTime = Date()
         self.reporterUserId = reporterUserId
         self.reporterUserName = reporterUserName
-        self.reporterUserAvatar = reporterUserAvatar
         self.status = status
     }
 }
@@ -3084,63 +3066,59 @@ struct SearchView: View {
             return rand
         }()
         
-        // 获取被举报者头像信息（使用默认头像，因为无法获取被举报者的真实头像）
-        // 被举报者头像未知时，用通用默认emoji
-        let reportedUserAvatar = "👤"
-        
-        // 尝试上传到LeanCloud - 包含用户类型字段
-        var reportData: [String: Any] = [
-            "reported_user_id": reportedDeviceId ?? "unknown_device", // 被举报者的设备ID
-            "reported_user_name": reportedUserName ?? "",
-            "reported_user_email": reportedUserEmail ?? "",
-            "reported_user_login_type": reportedUserLoginType ?? "unknown", // 被举报者的用户类型
-            "reported_user_avatar": reportedUserAvatar, // 添加被举报者头像
-            "report_reason": reportReason,
-            "report_time": ISO8601DateFormatter().string(from: Date()),
-            "reporter_user_id": currentUser.id,
-            "reporter_user_name": currentUser.fullName,
-            "reporter_user_avatar": reporterAvatar // 添加举报者头像
-        ]
-        
-        // 如果上传失败，尝试不包含用户类型字段的版本
-        let fallbackReportData: [String: Any] = [
-            "reported_user_id": reportedDeviceId ?? "unknown_device",
-            "reported_user_name": reportedUserName ?? "",
-            "reported_user_email": reportedUserEmail ?? "",
-            "reported_user_avatar": reportedUserAvatar, // 添加被举报者头像
-            "report_reason": reportReason,
-            "report_time": ISO8601DateFormatter().string(from: Date()),
-            "reporter_user_id": currentUser.id,
-            "reporter_user_name": currentUser.fullName,
-            "reporter_user_avatar": reporterAvatar // 添加举报者头像
-        ]
-        
-        print("📋 构建举报数据...")
-        print("   📄 reported_user_login_type: \(reportedUserLoginType ?? "unknown")")
-        print("   📄 完整举报数据: \(reportData)")
-        
-        print("📋 开始上传举报记录...")
-        print("   📄 举报数据: \(reportData)")
-        print("   📝 已包含 reported_user_login_type 字段")
-        do {
-            let dataSize = try JSONSerialization.data(withJSONObject: reportData).count
-            print("   📊 数据大小: \(dataSize) bytes")
-        } catch {
-            print("   ⚠️ 无法计算数据大小: \(error.localizedDescription)")
-        }
-        
-        LeanCloudService.shared.uploadReportRecord(reportData: reportData) { success, message in
-            if success {
-                print("✅ 举报记录上传成功")
-            } else {
-                print("❌ 举报记录上传失败: \(message)")
-                print("📋 失败详情:")
-                print("   📄 举报数据: \(reportData)")
-                do {
-                    let dataSize = try JSONSerialization.data(withJSONObject: reportData).count
-                    print("   📊 数据大小: \(dataSize) bytes")
-                } catch {
-                    print("   ⚠️ 无法计算数据大小: \(error.localizedDescription)")
+        // 先尝试获取被举报者的真实头像（需 userId 与 loginType）
+        let tryFetchReportedAvatar = (reportedUserId.isEmpty || (reportedUserLoginType ?? "").isEmpty) == false
+        if tryFetchReportedAvatar {
+            LeanCloudService.shared.fetchUserAvatar(userId: reportedUserId, loginType: reportedUserLoginType ?? "") { fetchedAvatar, _ in
+                let finalReportedAvatar = (fetchedAvatar?.isEmpty == false) ? fetchedAvatar! : "👤"
+
+                var reportData: [String: Any] = [
+                    "reported_user_id": reportedDeviceId ?? "unknown_device",
+                    "reported_user_name": reportedUserName ?? "",
+                    "reported_user_email": reportedUserEmail ?? "",
+                    "reported_user_login_type": reportedUserLoginType ?? "unknown",
+                    "reported_user_avatar": finalReportedAvatar,
+                    "report_reason": reportReason,
+                    "report_time": ISO8601DateFormatter().string(from: Date()),
+                    "reporter_user_id": currentUser.id,
+                    "reporter_user_name": currentUser.fullName,
+                    "reporter_user_avatar": reporterAvatar
+                ]
+
+                print("📋 构建举报数据(含真实被举报者头像)...")
+                print("   📄 完整举报数据: \(reportData)")
+
+                LeanCloudService.shared.uploadReportRecord(reportData: reportData) { success, message in
+                    if success {
+                        print("✅ 举报记录上传成功")
+                    } else {
+                        print("❌ 举报记录上传失败: \(message)")
+                    }
+                }
+            }
+        } else {
+            // 无法查询真实头像时，使用通用头像占位
+            var reportData: [String: Any] = [
+                "reported_user_id": reportedDeviceId ?? "unknown_device",
+                "reported_user_name": reportedUserName ?? "",
+                "reported_user_email": reportedUserEmail ?? "",
+                "reported_user_login_type": reportedUserLoginType ?? "unknown",
+                "reported_user_avatar": "👤",
+                "report_reason": reportReason,
+                "report_time": ISO8601DateFormatter().string(from: Date()),
+                "reporter_user_id": currentUser.id,
+                "reporter_user_name": currentUser.fullName,
+                "reporter_user_avatar": reporterAvatar
+            ]
+
+            print("📋 构建举报数据(使用占位头像)...")
+            print("   📄 完整举报数据: \(reportData)")
+
+            LeanCloudService.shared.uploadReportRecord(reportData: reportData) { success, message in
+                if success {
+                    print("✅ 举报记录上传成功")
+                } else {
+                    print("❌ 举报记录上传失败: \(message)")
                 }
             }
         }
@@ -5540,16 +5518,15 @@ struct ReportRecordProcessingView: View {
                     // 过滤掉被举报人是内部用户的记录和已处理的记录
                     let filteredRecords = reportRecords.filter { record in
                         record.reportedUserLoginType != "internal" && 
-                        !(record.objectId != nil && processedRecordIds.contains(record.objectId!))
+                        !processedRecordIds.contains(record.id)
                     }
                     
                     // 转换为UI数据模型
                     self.reportRecords = filteredRecords.map { record in
                         ReportRecordUI(
-                            id: record.objectId ?? record.id.uuidString,
+                            id: record.id,
                             reporterName: record.reporterUserName,
                             reportedName: record.reportedUserName,
-                            reportedUserAvatar: record.reportedUserAvatar,
                             reportedUserLoginType: record.reportedUserLoginType,
                             reason: record.reportReason,
                             description: "举报时间: \(formatDate(record.reportTime))",
@@ -5652,7 +5629,6 @@ struct ReportRecordUI {
     let id: String
     let reporterName: String
     let reportedName: String
-    let reportedUserAvatar: String?
     let reportedUserLoginType: String? // 被举报用户的用户类型
     let reason: String
     let description: String
@@ -5680,22 +5656,25 @@ struct ReportRecordCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     // 被举报人信息
                     HStack(spacing: 12) {
-                        // 被举报人头像：优先显示记录中的 reportedUserAvatar，其次按登录类型回退
+                        // 被举报人头像
                         ZStack {
                             Circle()
                                 .fill(getUserTypeColor(record.reportedUserLoginType))
                                 .frame(width: 40, height: 40)
-                            if let avatar = record.reportedUserAvatar, !avatar.isEmpty {
-                                Text(avatar)
-                                    .font(.system(size: 20))
-                            } else if let loginType = record.reportedUserLoginType, loginType == "apple" {
-                                Image(systemName: "applelogo")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 18, weight: .medium))
-                            } else if let loginType = record.reportedUserLoginType, loginType == "internal" {
-                                Image(systemName: "person.circle.fill")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 18, weight: .medium))
+                            
+                            if let loginType = record.reportedUserLoginType {
+                                if loginType == "apple" {
+                                    Image(systemName: "applelogo")
+                                        .foregroundColor(.white)
+                                        .font(.system(size: 18, weight: .medium))
+                                } else if loginType == "internal" {
+                                    Image(systemName: "person.circle.fill")
+                                        .foregroundColor(.white)
+                                        .font(.system(size: 18, weight: .medium))
+                                } else {
+                                    Text("👥")
+                                        .font(.system(size: 18))
+                                }
                             } else {
                                 Text("👥")
                                     .font(.system(size: 18))
