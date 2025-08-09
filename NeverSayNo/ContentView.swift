@@ -4367,16 +4367,8 @@ struct HistoryCardView: View {
     
     // 获取用户类型头像颜色
     private func getUserTypeColor(_ loginType: String?) -> Color {
-        switch loginType {
-        case "apple":
-            return Color.black
-        case "internal":
-            return Color.purple
-        case "guest":
-            return Color.blue
-        default:
-            return Color.gray
-        }
+        // 统一使用白色背景
+        return Color.white
     }
 }
 
