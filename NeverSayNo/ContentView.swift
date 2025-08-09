@@ -5546,6 +5546,7 @@ struct ReportRecordProcessingView: View {
                             id: record.id,
                             reporterName: record.reporterUserName,
                             reportedName: record.reportedUserName,
+                            reportedUserAvatar: record.reportedUserAvatar,
                             reportedUserLoginType: record.reportedUserLoginType,
                             reason: record.reportReason,
                             description: "举报时间: \(formatDate(record.reportTime))",
@@ -5648,6 +5649,7 @@ struct ReportRecordUI {
     let id: String
     let reporterName: String
     let reportedName: String
+    let reportedUserAvatar: String?
     let reportedUserLoginType: String? // 被举报用户的用户类型
     let reason: String
     let description: String
