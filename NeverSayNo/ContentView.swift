@@ -5521,19 +5521,20 @@ struct ReportRecordProcessingView: View {
                         !processedRecordIds.contains(record.id)
                     }
                     
-                    // 转换为UI数据模型
-                    self.reportRecords = filteredRecords.map { record in
-                        ReportRecordUI(
-                            id: record.id,
-                            reporterName: record.reporterUserName,
-                            reportedName: record.reportedUserName,
-                            reportedUserLoginType: record.reportedUserLoginType,
-                            reason: record.reportReason,
-                            description: "举报时间: \(formatDate(record.reportTime))",
-                            status: "待处理",
-                            createdAt: record.reportTime
-                        )
-                    }
+                        // 转换为UI数据模型（带真实头像）
+                        self.reportRecords = filteredRecords.map { record in
+                            ReportRecordUI(
+                                id: record.id,
+                                reporterName: record.reporterUserName,
+                                reportedName: record.reportedUserName,
+                                reportedUserLoginType: record.reportedUserLoginType,
+                                reportedUserAvatar: record.reportedUserAvatar,
+                                reason: record.reportReason,
+                                description: "举报时间: \(formatDate(record.reportTime))",
+                                status: "待处理",
+                                createdAt: record.reportTime
+                            )
+                        }
                     print("📋 成功加载 \(self.reportRecords.count) 条举报记录（已过滤内部用户举报和已处理记录）")
                 } else {
                     self.reportRecords = []
@@ -5630,6 +5631,7 @@ struct ReportRecordUI {
     let reporterName: String
     let reportedName: String
     let reportedUserLoginType: String? // 被举报用户的用户类型
+    let reportedUserAvatar: String?     // 被举报用户真实头像
     let reason: String
     let description: String
     var status: String
@@ -5656,13 +5658,16 @@ struct ReportRecordCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     // 被举报人信息
                     HStack(spacing: 12) {
-                        // 被举报人头像
+                        // 被举报人头像（优先真实头像，其次类型回退）
                         ZStack {
                             Circle()
                                 .fill(getUserTypeColor(record.reportedUserLoginType))
                                 .frame(width: 40, height: 40)
                             
-                            if let loginType = record.reportedUserLoginType {
+                            if let avatar = record.reportedUserAvatar, !avatar.isEmpty {
+                                Text(avatar)
+                                    .font(.system(size: 18))
+                            } else if let loginType = record.reportedUserLoginType {
                                 if loginType == "apple" {
                                     Image(systemName: "applelogo")
                                         .foregroundColor(.white)

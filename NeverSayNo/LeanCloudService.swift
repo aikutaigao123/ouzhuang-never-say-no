@@ -3246,6 +3246,7 @@ class LeanCloudService: ObservableObject {
         let reportedUserName: String
         let reportedUserEmail: String
         let reportedUserLoginType: String? // 被举报用户的用户类型
+        let reportedUserAvatar: String?    // 被举报用户头像（真实头像表情）
         let reportReason: String
         let reportTime: Date
     }
@@ -3336,6 +3337,7 @@ class LeanCloudService: ObservableObject {
         let reportedUserId = record["reported_user_id"] as? String ?? ""
         let reportedUserEmail = record["reported_user_email"] as? String ?? ""
         let reportedUserLoginType = record["reported_user_login_type"] as? String
+        let reportedUserAvatar = record["reported_user_avatar"] as? String
         
         return LeanCloudReportRecord(
             id: objectId,
@@ -3345,6 +3347,7 @@ class LeanCloudService: ObservableObject {
             reportedUserName: reportedUserName,
             reportedUserEmail: reportedUserEmail,
             reportedUserLoginType: reportedUserLoginType,
+            reportedUserAvatar: reportedUserAvatar,
             reportReason: reportReason,
             reportTime: reportTime
         )
