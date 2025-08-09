@@ -192,9 +192,7 @@ struct TermsOfServiceView: View {
                         .font(.body)
                     Text("• 邮箱：928322941@qq.com")
                         .font(.body)
-                    // 网站信息已移除
-                    Text("• 应用内反馈")
-                        .font(.body)
+                    // 网站信息已移除；应用内反馈已移除
                     
                     Text("感谢您选择我们的服务。我们致力于为您提供安全、可靠的位置匹配体验。")
                         .font(.body)
