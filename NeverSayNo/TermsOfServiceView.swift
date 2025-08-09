@@ -181,7 +181,7 @@ struct TermsOfServiceView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    Text("我们可能会不时更新本协议。重大变更时，我们会通过应用内通知或电子邮件通知您。继续使用服务表示您同意新条款。")
+                    Text("我们可能会不时更新本协议。重大变更将通过应用内通知告知您（不使用电子邮件通知）。继续使用服务表示您同意新条款。")
                         .font(.body)
                     
                     Text("13. 联系我们")

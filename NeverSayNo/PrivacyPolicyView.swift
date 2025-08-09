@@ -27,7 +27,7 @@ struct PrivacyPolicyView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    Text("• 位置信息（精确/近似）：仅在您点击“寻找”并授权定位后用于匹配附近用户，不在后台持续定位")
+                    Text("• 位置信息（精确/近似）：用于“位置记录匹配”，即基于您在使用时生成的位置记录进行匹配，而不是实时位置的持续共享或展示；仅在您点击“寻找”并授权定位后获取，不在后台持续定位")
                         .font(.body)
                     Text("• 用户标识：Apple ID 标识（经 Apple 授权）或设备标识符（用于游客登录及防滥用）")
                         .font(.body)
@@ -148,7 +148,7 @@ struct PrivacyPolicyView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    Text("我们可能会不时更新本隐私政策。重大变更时，我们会通过应用内通知或电子邮件通知您。")
+                    Text("我们可能会不时更新本隐私政策。重大变更将通过应用内通知告知您（不使用电子邮件通知）。")
                         .font(.body)
                     
                     Text("12. 联系我们")
