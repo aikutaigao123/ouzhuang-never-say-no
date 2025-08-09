@@ -137,7 +137,7 @@ struct PrivacyPolicyView: View {
                     
                     Text("如果您对本隐私政策有任何疑问，请通过以下方式联系我们：")
                         .font(.body)
-                    Text("• 邮箱：privacy@yourapp.com")
+                    Text("• 邮箱：928322941@qq.com")
                         .font(.body)
                     Text("• 应用内反馈")
                         .font(.body)

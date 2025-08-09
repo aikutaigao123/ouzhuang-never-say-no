@@ -186,8 +186,7 @@ struct TermsOfServiceView: View {
                         .font(.body)
                     Text("• 邮箱：928322941@qq.com")
                         .font(.body)
-                    Text("• 网站：http://www.yonderspace-cd.com")
-                        .font(.body)
+                    // 网站信息已移除
                     Text("• 应用内反馈")
                         .font(.body)
                     
