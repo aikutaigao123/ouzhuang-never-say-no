@@ -4106,28 +4106,47 @@ struct HistoryCardView: View {
                 // 用户名和登录类型
                 HStack(spacing: 12) {
                     // 用户头像（历史卡片也以最新 UserAvatarRecord 为准）
-                    if let a = resolvedAvatar {
-                        if a == "apple_logo" {
-                            Image(systemName: "applelogo")
-                                .font(.system(size: 24))
-                                .foregroundColor(.black)
-                                .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
-                                .onTapGesture { onTapAvatar("applelogo") }
-                        } else {
-                            Text(a)
-                                .font(.system(size: 24))
-                                .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
-                                .onTapGesture { onTapAvatar(a) }
-                        }
-                    } else {
-                        ZStack {
-                            Circle().fill(getUserTypeBackground(historyItem.record.login_type)).frame(width: 40, height: 40)
-                            if historyItem.record.login_type == "apple" {
-                                Image(systemName: "applelogo").foregroundColor(.black).font(.system(size: 18, weight: .medium)).onTapGesture { onTapAvatar("applelogo") }
-                            } else if historyItem.record.login_type == "internal" {
-                                Image(systemName: "person.circle.fill").foregroundColor(.purple).font(.system(size: 18, weight: .medium)).onTapGesture { onTapAvatar("person.circle.fill") }
+                    Group {
+                        if let a = resolvedAvatar {
+                            // 有明确头像
+                            if a == "apple_logo" {
+                                // 显示苹果符号
+                                let zoomToken = "applelogo"
+                                Image(systemName: "applelogo")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.black)
+                                    .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
+                                    .onTapGesture { onTapAvatar(zoomToken) }
                             } else {
-                                Text("👥").font(.system(size: 18)).onTapGesture { onTapAvatar("👥") }
+                                // 显示 emoji 字符
+                                let zoomToken = a
+                                Text(a)
+                                    .font(.system(size: 24))
+                                    .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
+                                    .onTapGesture { onTapAvatar(zoomToken) }
+                            }
+                        } else {
+                            // 无明确头像，按登录类型回退
+                            ZStack {
+                                Circle().fill(getUserTypeBackground(historyItem.record.login_type)).frame(width: 40, height: 40)
+                                if historyItem.record.login_type == "apple" {
+                                    let zoomToken = "applelogo"
+                                    Image(systemName: "applelogo")
+                                        .foregroundColor(.black)
+                                        .font(.system(size: 18, weight: .medium))
+                                        .onTapGesture { onTapAvatar(zoomToken) }
+                                } else if historyItem.record.login_type == "internal" {
+                                    let zoomToken = "person.circle.fill"
+                                    Image(systemName: "person.circle.fill")
+                                        .foregroundColor(.purple)
+                                        .font(.system(size: 18, weight: .medium))
+                                        .onTapGesture { onTapAvatar(zoomToken) }
+                                } else {
+                                    let zoomToken = "👥"
+                                    Text("👥")
+                                        .font(.system(size: 18))
+                                        .onTapGesture { onTapAvatar(zoomToken) }
+                                }
                             }
                         }
                     }
