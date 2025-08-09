@@ -2364,6 +2364,10 @@ struct SearchView: View {
                 },
                 ensureLatestAvatar: { uid, ltype in
                     ensureLatestAvatar(userId: uid, loginType: ltype)
+                },
+                onTapAvatar: { emoji in
+                    currentAvatarForZoom = emoji
+                    showAvatarZoom = true
                 }
             )
         }
@@ -3822,10 +3826,7 @@ struct RandomMatchHistoryView: View {
                                 hasReportedUser: hasReportedUser,
                                 avatarResolver: avatarResolver,
                                 ensureLatestAvatar: ensureLatestAvatar,
-                                onTapAvatar: { emoji in
-                                    currentAvatarForZoom = emoji
-                                    showAvatarZoom = true
-                                }
+                                onTapAvatar: onTapAvatar
                             )
                             .listRowInsets(EdgeInsets())
                             .listRowSeparator(.hidden)
@@ -4048,6 +4049,7 @@ struct HistoryCardView: View {
     let hasReportedUser: (String) -> Bool
     let avatarResolver: (String?, String?, String?) -> String?
     let ensureLatestAvatar: (String?, String?) -> Void
+    let onTapAvatar: (String) -> Void
     
     // 计算并解析头像（优先最新 UserAvatarRecord）
     private var resolvedAvatar: String? {
