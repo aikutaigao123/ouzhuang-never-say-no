@@ -4367,8 +4367,16 @@ struct HistoryCardView: View {
     
     // 获取用户类型头像颜色
     private func getUserTypeColor(_ loginType: String?) -> Color {
-        // 统一使用白色背景
-        return Color.white
+        switch loginType {
+        case "apple":
+            return Color.black
+        case "internal":
+            return Color.purple
+        case "guest":
+            return Color.blue
+        default:
+            return Color.gray
+        }
     }
 }
 
@@ -5652,23 +5660,28 @@ struct ReportRecordCard: View {
                     HStack(spacing: 12) {
                         // 被举报人头像（优先真实头像，其次类型回退）
                         ZStack {
+                            // 使用浅色背景，风格与其他界面保持一致
                             Circle()
-                                .fill(getUserTypeColor(record.reportedUserLoginType))
+                                .fill(getUserTypeBackground(record.reportedUserLoginType))
                                 .frame(width: 40, height: 40)
-                            
+
                             if let avatar = record.reportedUserAvatar, !avatar.isEmpty {
                                 Text(avatar)
                                     .font(.system(size: 18))
                             } else if let loginType = record.reportedUserLoginType {
-                                if loginType == "apple" {
+                                switch loginType {
+                                case "apple":
                                     Image(systemName: "applelogo")
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.black)
                                         .font(.system(size: 18, weight: .medium))
-                                } else if loginType == "internal" {
+                                case "internal":
                                     Image(systemName: "person.circle.fill")
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.purple)
                                         .font(.system(size: 18, weight: .medium))
-                                } else {
+                                case "guest":
+                                    Text("👥")
+                                        .font(.system(size: 18))
+                                default:
                                     Text("👥")
                                         .font(.system(size: 18))
                                 }
