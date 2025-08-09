@@ -3056,20 +3056,19 @@ struct SearchView: View {
         saveReportRecords()
         
         // 获取举报者头像信息 - 基于用户类型设置默认头像
-        let reporterAvatar: String
-        switch currentUser.loginType {
-        case .apple:
-            reporterAvatar = "apple_logo" // Apple logo SF Symbol
-        case .internal:
-            reporterAvatar = "👤" // 内部用户 emoji
-        case .guest:
-            reporterAvatar = "👥" // 游客 emoji
-        default:
-            reporterAvatar = "👤" // 默认 emoji
-        }
+        // 统一使用随机或已分配的自定义emoji头像
+        let reporterAvatar: String = {
+            if let saved = UserDefaults.standard.string(forKey: "custom_avatar_\(currentUser.id)") {
+                return saved
+            }
+            let rand = EmojiList.allEmojis.randomElement() ?? "🙂"
+            UserDefaults.standard.set(rand, forKey: "custom_avatar_\(currentUser.id)")
+            return rand
+        }()
         
         // 获取被举报者头像信息（使用默认头像，因为无法获取被举报者的真实头像）
-        let reportedUserAvatar = "👤" // 被举报者默认头像
+        // 被举报者头像未知时，用通用默认emoji
+        let reportedUserAvatar = "👤"
         
         // 尝试上传到LeanCloud - 包含用户类型字段
         var reportData: [String: Any] = [

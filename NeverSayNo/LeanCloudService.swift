@@ -171,7 +171,11 @@ class LeanCloudService: ObservableObject {
     private func sendLocationWithSimplifiedData(locationData: [String: Any], completion: @escaping (Bool, String) -> Void) {
         print("📤 使用简化数据发送位置信息...")
         
-        // 提取基本字段，不包含新添加的字段
+        // 提取基本字段，并确保包含用户头像
+        let userIdInData = (locationData["user_id"] as? String) ?? ""
+        let avatarInData = (locationData["user_avatar"] as? String)
+            ?? UserDefaults.standard.string(forKey: "custom_avatar_\(userIdInData)")
+            ?? "👤"
         let simplifiedData: [String: Any] = [
             "latitude": locationData["latitude"] ?? 0.0,
             "longitude": locationData["longitude"] ?? 0.0,
@@ -179,6 +183,8 @@ class LeanCloudService: ObservableObject {
             "user_id": locationData["user_id"] ?? "",
             "user_name": locationData["user_name"] ?? "",
             "login_type": locationData["login_type"] ?? "",
+            "user_email": locationData["user_email"] ?? "",
+            "user_avatar": avatarInData,
             "device_id": locationData["device_id"] ?? "",
             "timezone": locationData["timezone"] ?? "",
             "device_time": locationData["device_time"] ?? ""
@@ -2939,9 +2945,12 @@ class LeanCloudService: ObservableObject {
         }
         
         // 准备删除请求数据
+        // 确保包含头像
+        let deletionUserAvatar = UserDefaults.standard.string(forKey: "custom_avatar_\(userId)") ?? "👤"
         let deletionData: [String: Any] = [
             "user_id": userId,
             "user_name": userName ?? "未知用户",
+            "user_avatar": deletionUserAvatar,
             "device_id": deviceId,
             "request_time": ISO8601DateFormatter().string(from: Date()),
             "status": "pending",
@@ -3447,10 +3456,14 @@ class LeanCloudService: ObservableObject {
             }
         }
         
-        // 添加处理相关信息
+        // 添加处理相关信息 + 处理者头像
         processedRecordData["processing_action"] = action
         processedRecordData["processing_time"] = ISO8601DateFormatter().string(from: Date())
         processedRecordData["processor_device_id"] = UIDevice.current.identifierForVendor?.uuidString ?? "unknown_device"
+        if let processorUserId = UserDefaults.standard.string(forKey: "current_user_id") {
+            processedRecordData["processor_user_id"] = processorUserId
+            processedRecordData["processor_user_avatar"] = UserDefaults.standard.string(forKey: "custom_avatar_\(processorUserId)") ?? "👤"
+        }
         
         // 添加ACL权限
         let processedRecordDataWithACL = addACLToData(processedRecordData)
