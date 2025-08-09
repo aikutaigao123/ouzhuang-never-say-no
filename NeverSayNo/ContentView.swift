@@ -2360,6 +2360,7 @@ struct SearchView: View {
         }
         .sheet(isPresented: $showRandomHistory) {
             RandomMatchHistoryView(
+                userManager: userManager,
                 history: randomMatchHistory,
                 calculateDistance: calculateDistance,
                 formatDistance: formatDistance,
@@ -3784,6 +3785,7 @@ struct RandomRecordView: View {
 
 // 随机匹配历史视图
 struct RandomMatchHistoryView: View {
+    @ObservedObject var userManager: UserManager
     let history: [RandomMatchHistory]
     let calculateDistance: (CLLocation, Double, Double) -> Double
     let formatDistance: (Double) -> String
@@ -3801,6 +3803,8 @@ struct RandomMatchHistoryView: View {
     
     @Environment(\.dismiss) private var dismiss
     @State private var showClearAlert = false
+    @State private var showAvatarZoomInHistory = false
+    @State private var historyAvatarForZoom: String? = nil
     
     var body: some View {
         NavigationStack {
@@ -3836,7 +3840,11 @@ struct RandomMatchHistoryView: View {
                 },
                                 hasReportedUser: hasReportedUser,
                                 avatarResolver: avatarResolver,
-                                ensureLatestAvatar: ensureLatestAvatar
+                                ensureLatestAvatar: ensureLatestAvatar,
+                                onTapAvatar: { token in
+                                    historyAvatarForZoom = token
+                                    showAvatarZoomInHistory = true
+                                }
                             )
                             .listRowInsets(EdgeInsets())
                             .listRowSeparator(.hidden)
@@ -3856,6 +3864,9 @@ struct RandomMatchHistoryView: View {
             }
             .navigationTitle("随机匹配历史")
             .navigationBarTitleDisplayMode(.large)
+            .sheet(isPresented: $showAvatarZoomInHistory) {
+                AvatarZoomView(userManager: userManager, showRandomButton: false, initialToken: historyAvatarForZoom)
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     if !history.isEmpty {
@@ -4059,6 +4070,7 @@ struct HistoryCardView: View {
     let hasReportedUser: (String) -> Bool
     let avatarResolver: (String?, String?, String?) -> String?
     let ensureLatestAvatar: (String?, String?) -> Void
+    let onTapAvatar: (String) -> Void
     
     // 计算并解析头像（优先最新 UserAvatarRecord）
     private var resolvedAvatar: String? {
@@ -4115,25 +4127,25 @@ struct HistoryCardView: View {
                                 .font(.system(size: 24))
                                 .foregroundColor(.black)
                                 .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
-                                .onTapGesture { zoomToken = "applelogo"; zoomAllowRandom = false; showAvatarZoom = true }
+                                .onTapGesture { onTapAvatar("applelogo") }
                         } else {
                             Text(a)
                                 .font(.system(size: 24))
                                 .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 40, height: 40))
-                                .onTapGesture { zoomToken = a; zoomAllowRandom = false; showAvatarZoom = true }
+                                .onTapGesture { onTapAvatar(a) }
                         }
                     } else {
                         ZStack {
                             Circle().fill(getUserTypeBackground(historyItem.record.login_type)).frame(width: 40, height: 40)
                             if historyItem.record.login_type == "apple" {
                                 Image(systemName: "applelogo").foregroundColor(.black).font(.system(size: 18, weight: .medium))
-                                    .onTapGesture { zoomToken = "applelogo"; zoomAllowRandom = false; showAvatarZoom = true }
+                                    .onTapGesture { onTapAvatar("applelogo") }
                             } else if historyItem.record.login_type == "internal" {
                                 Image(systemName: "person.circle.fill").foregroundColor(.purple).font(.system(size: 18, weight: .medium))
-                                    .onTapGesture { zoomToken = "person.circle.fill"; zoomAllowRandom = false; showAvatarZoom = true }
+                                    .onTapGesture { onTapAvatar("person.circle.fill") }
                             } else {
                                 Text("👥").font(.system(size: 18))
-                                    .onTapGesture { zoomToken = "👥"; zoomAllowRandom = false; showAvatarZoom = true }
+                                    .onTapGesture { onTapAvatar("👥") }
                             }
                         }
                     }
