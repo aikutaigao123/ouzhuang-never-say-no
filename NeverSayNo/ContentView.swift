@@ -5976,14 +5976,13 @@ struct AvatarZoomView: View {
                 Text(alertMessage)
             }
             .onAppear {
-                // 初始化头像显示
-                if currentAvatarEmoji == nil {
-                    if let initial = initialEmoji {
-                        currentAvatarEmoji = initial
-                    } else if let userId = userManager.currentUser?.id,
-                              let savedEmoji = UserDefaults.standard.string(forKey: "custom_avatar_\(userId)") {
-                        currentAvatarEmoji = savedEmoji
-                    }
+                // 优先使用外部传入的 initialEmoji（例如预览他人头像）
+                if let initial = initialEmoji {
+                    currentAvatarEmoji = initial
+                } else if currentAvatarEmoji == nil,
+                          let userId = userManager.currentUser?.id,
+                          let savedEmoji = UserDefaults.standard.string(forKey: "custom_avatar_\(userId)") {
+                    currentAvatarEmoji = savedEmoji
                 }
             }
             .onDisappear {
