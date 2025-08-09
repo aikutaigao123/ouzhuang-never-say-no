@@ -5870,6 +5870,8 @@ struct AvatarZoomView: View {
     private var displayAvatar: String? {
         return currentAvatarEmoji
     }
+    // 是否在查看他人头像（来自历史）
+    private var isViewingOther: Bool { initialEmoji != nil }
     
     var body: some View {
         NavigationView {
@@ -5920,25 +5922,27 @@ struct AvatarZoomView: View {
                     }
                 }
                 
-                // 用户信息
-                VStack(spacing: 10) {
-                    Text(userManager.currentUser?.fullName ?? "未知用户")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
-                    
-                    if let loginType = userManager.currentUser?.loginType {
-                        let loginTypeText = loginType == .apple ? "Apple账户" : 
-                                          loginType == .`internal` ? "内部用户" : "游客模式"
-                        Text(loginTypeText)
-                            .font(.headline)
-                            .foregroundColor(.gray)
-                    }
-                    
-                    if let email = userManager.currentUser?.email, !email.isEmpty {
-                        Text(email)
-                            .font(.body)
-                            .foregroundColor(.blue)
+                // 用户信息（仅在查看自己时显示；查看他人时隐藏登录类型/信息）
+                if !isViewingOther {
+                    VStack(spacing: 10) {
+                        Text(userManager.currentUser?.fullName ?? "未知用户")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                        
+                        if let loginType = userManager.currentUser?.loginType {
+                            let loginTypeText = loginType == .apple ? "Apple账户" : 
+                                              loginType == .`internal` ? "内部用户" : "游客模式"
+                            Text(loginTypeText)
+                                .font(.headline)
+                                .foregroundColor(.gray)
+                        }
+                        
+                        if let email = userManager.currentUser?.email, !email.isEmpty {
+                            Text(email)
+                                .font(.body)
+                                .foregroundColor(.blue)
+                        }
                     }
                 }
                 
