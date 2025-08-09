@@ -2098,9 +2098,12 @@ class LeanCloudService: ObservableObject {
                                         reportedUserId: reportedUserId,
                                         reportedUserName: reportDict["reported_user_name"] as? String,
                                         reportedUserEmail: reportDict["reported_user_email"] as? String,
+                                        reportedUserAvatar: reportDict["reported_user_avatar"] as? String,
+                                        reportedUserLoginType: reportDict["reported_user_login_type"] as? String,
                                         reportReason: reportReason,
                                         reporterUserId: reporterUserId,
                                         reporterUserName: reportDict["reporter_user_name"] as? String,
+                                        reporterUserAvatar: reportDict["reporter_user_avatar"] as? String,
                                         status: reportDict["status"] as? String
                                     )
                                 }

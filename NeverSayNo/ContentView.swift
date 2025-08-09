@@ -81,21 +81,36 @@ struct ReportRecord: Codable, Identifiable {
     let reportedUserId: String
     let reportedUserName: String?
     let reportedUserEmail: String?
+    let reportedUserAvatar: String?
+    let reportedUserLoginType: String?
     let reportReason: String
     let reportTime: Date
     let reporterUserId: String
     let reporterUserName: String?
+    let reporterUserAvatar: String?
     let status: String?
     
-    init(reportedUserId: String, reportedUserName: String?, reportedUserEmail: String?, reportReason: String, reporterUserId: String, reporterUserName: String?, status: String? = nil) {
+    init(reportedUserId: String,
+         reportedUserName: String?,
+         reportedUserEmail: String?,
+         reportedUserAvatar: String? = nil,
+         reportedUserLoginType: String? = nil,
+         reportReason: String,
+         reporterUserId: String,
+         reporterUserName: String?,
+         reporterUserAvatar: String? = nil,
+         status: String? = nil) {
         self.id = UUID()
         self.reportedUserId = reportedUserId
         self.reportedUserName = reportedUserName
         self.reportedUserEmail = reportedUserEmail
+        self.reportedUserAvatar = reportedUserAvatar
+        self.reportedUserLoginType = reportedUserLoginType
         self.reportReason = reportReason
         self.reportTime = Date()
         self.reporterUserId = reporterUserId
         self.reporterUserName = reporterUserName
+        self.reporterUserAvatar = reporterUserAvatar
         self.status = status
     }
 }
@@ -5660,25 +5675,22 @@ struct ReportRecordCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     // 被举报人信息
                     HStack(spacing: 12) {
-                        // 被举报人头像
+                        // 被举报人头像：优先显示记录中的 reportedUserAvatar，其次按登录类型回退
                         ZStack {
                             Circle()
                                 .fill(getUserTypeColor(record.reportedUserLoginType))
                                 .frame(width: 40, height: 40)
-                            
-                            if let loginType = record.reportedUserLoginType {
-                                if loginType == "apple" {
-                                    Image(systemName: "applelogo")
-                                        .foregroundColor(.white)
-                                        .font(.system(size: 18, weight: .medium))
-                                } else if loginType == "internal" {
-                                    Image(systemName: "person.circle.fill")
-                                        .foregroundColor(.white)
-                                        .font(.system(size: 18, weight: .medium))
-                                } else {
-                                    Text("👥")
-                                        .font(.system(size: 18))
-                                }
+                            if let avatar = record.reportedUserAvatar, !avatar.isEmpty {
+                                Text(avatar)
+                                    .font(.system(size: 20))
+                            } else if let loginType = record.reportedUserLoginType, loginType == "apple" {
+                                Image(systemName: "applelogo")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 18, weight: .medium))
+                            } else if let loginType = record.reportedUserLoginType, loginType == "internal" {
+                                Image(systemName: "person.circle.fill")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 18, weight: .medium))
                             } else {
                                 Text("👥")
                                     .font(.system(size: 18))
