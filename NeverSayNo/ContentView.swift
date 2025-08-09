@@ -4043,6 +4043,11 @@ struct HistoryCardView: View {
     let avatarResolver: (String?, String?, String?) -> String?
     let ensureLatestAvatar: (String?, String?) -> Void
     
+    // 计算并解析头像（优先最新 UserAvatarRecord）
+    private var resolvedAvatar: String? {
+        avatarResolver(historyItem.record.user_id, historyItem.record.login_type, historyItem.record.user_avatar)
+    }
+
     @State private var showReportSheet = false
     @State private var selectedReportReason = "不当内容"
     @State private var showCopySuccess = false // 新增：显示复制成功提示
@@ -4087,9 +4092,7 @@ struct HistoryCardView: View {
                 // 用户名和登录类型
                 HStack(spacing: 12) {
                     // 用户头像（历史卡片也以最新 UserAvatarRecord 为准）
-                    ensureLatestAvatar(historyItem.record.user_id, historyItem.record.login_type)
-                    let avatar = avatarResolver(historyItem.record.user_id, historyItem.record.login_type, historyItem.record.user_avatar)
-                    if let a = avatar {
+                    if let a = resolvedAvatar {
                         if a == "apple_logo" {
                             Image(systemName: "applelogo")
                                 .font(.system(size: 24))
