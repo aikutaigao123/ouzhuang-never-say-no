@@ -6029,29 +6029,7 @@ struct AvatarZoomView: View {
                 }
             }
             
-            // 强制UI刷新
-            DispatchQueue.main.async {
-                print("🔄 强制UI刷新")
-            }
-            
-            // 更新头像到LeanCloud
-            if let currentUser = userManager.currentUser {
-                let loginType = currentUser.loginType == .apple ? "apple" : 
-                               currentUser.loginType == .internal ? "internal" : "guest"
-                
-                print("☁️ 开始更新头像到LeanCloud...")
-                print("   📄 用户ID: \(currentUser.id)")
-                print("   📄 登录类型: \(loginType)")
-                print("   📄 新头像: \(randomEmoji)")
-                
-                // TODO: 实现LeanCloud头像更新功能
-                print("⚠️ LeanCloud头像更新功能暂未实现")
-                DispatchQueue.main.async {
-                    print("✅ 本地头像已更新")
-                }
-            } else {
-                print("❌ 当前用户信息为空")
-            }
+            // UI已由状态绑定自动刷新
             
             // 不显示成功提示框，直接更新头像
         } else {
