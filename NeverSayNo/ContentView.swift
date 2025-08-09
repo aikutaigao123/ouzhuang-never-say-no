@@ -2052,9 +2052,8 @@ struct SearchView: View {
                     HStack(spacing: 12) {
                             // 显示用户头像（优先取最新 UserAvatarRecord）
                             let displayAvatar: String? = {
-                                if let uid = record.user_id, let latest = latestAvatars[uid], !latest.isEmpty {
-                                    return latest
-                                }
+                                let uid = record.user_id
+                                if let latest = latestAvatars[uid], !latest.isEmpty { return latest }
                                 return record.user_avatar
                             }()
 
@@ -2085,7 +2084,7 @@ struct SearchView: View {
                                         .foregroundColor(.purple)
                                         .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
                                 } else {
-                                    Text(self.latestAvatars[record.user_id ?? ""] ?? "👥")
+                                    Text(self.latestAvatars[record.user_id] ?? "👥")
                                         .font(.system(size: 32))
                                         .background(Circle().fill(Color.gray.opacity(0.1)).frame(width: 50, height: 50))
                                 }
@@ -4075,7 +4074,7 @@ struct HistoryCardView: View {
                 // 用户名和登录类型
                 HStack(spacing: 12) {
                     // 用户头像（历史卡片也以最新 UserAvatarRecord 为准）
-                    let latest = latestAvatars[historyItem.record.user_id ?? ""]
+                    let latest = latestAvatars[historyItem.record.user_id]
                     let snapshot = historyItem.record.user_avatar
                     let avatar = (latest?.isEmpty == false ? latest : (snapshot?.isEmpty == false ? snapshot : nil))
                     if let a = avatar {
