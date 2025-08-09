@@ -5955,9 +5955,8 @@ struct AvatarZoomView: View {
                 if currentAvatarEmoji == nil {
                     if let initial = initialEmoji {
                         currentAvatarEmoji = initial
-                    } else {
-                    if let userId = userManager.currentUser?.id,
-                       let savedEmoji = UserDefaults.standard.string(forKey: "custom_avatar_\(userId)") {
+                    } else if let userId = userManager.currentUser?.id,
+                              let savedEmoji = UserDefaults.standard.string(forKey: "custom_avatar_\(userId)") {
                         currentAvatarEmoji = savedEmoji
                     }
                 }
